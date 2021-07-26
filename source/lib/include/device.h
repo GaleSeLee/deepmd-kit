@@ -10,8 +10,12 @@ typedef unsigned long long uint_64;
 
 #if GOOGLE_CUDA
 #include "gpu_cuda.h"
-#endif
+#endif //GOOGLE_CUDA
 
 #if TENSORFLOW_USE_ROCM
 #include "gpu_rocm.h"
-#endif
+#endif //TENSORFLOW_USE_ROCM
+
+#if GRAPHCORE_POPLAR
+#include "ipu_poplar.h"
+#endif //GRAPHCORE_POPLAR
