@@ -14,6 +14,8 @@ from deepmd.utils.tabulate import DeepTabulate
 from deepmd.utils.type_embed import embed_atom_type
 from deepmd.utils.sess import run_sess
 
+#nloc_nall need o modify
+
 class DescrptSeA ():
     @docstring_parameter(list_to_doc(ACTIVATION_FN_DICT.keys()), list_to_doc(PRECISION_DICT.keys()))
     def __init__ (self, 
@@ -349,11 +351,12 @@ class DescrptSeA ():
         coord = tf.reshape (coord_, [-1, natoms[1] * 3])
         box   = tf.reshape (box_, [-1, 9])
         atype = tf.reshape (atype_, [-1, natoms[1]])
+        nloc_nall = tf.ones([natoms[0], natoms[1]], tf.int32)
 
         self.descrpt, self.descrpt_deriv, self.rij, self.nlist \
             = op_module.prod_env_mat_a (coord,
                                        atype,
-                                       natoms,
+                                       nloc_nall,
                                        box,
                                        mesh,
                                        self.t_avg,
@@ -420,12 +423,13 @@ class DescrptSeA ():
         """
         [net_deriv] = tf.gradients (atom_ener, self.descrpt_reshape)
         tf.summary.histogram('net_derivative', net_deriv)
-        net_deriv_reshape = tf.reshape (net_deriv, [-1, natoms[0] * self.ndescrpt])        
+        net_deriv_reshape = tf.reshape (net_deriv, [-1, natoms[0] * self.ndescrpt])
+        nloc_nall = tf.ones([natoms[0], natoms[1]], tf.int32)
         force \
             = op_module.prod_force_se_a (net_deriv_reshape,
                                           self.descrpt_deriv,
                                           self.nlist,
-                                          natoms,
+                                          nloc_nall,
                                           n_a_sel = self.nnei_a,
                                           n_r_sel = self.nnei_r)
         virial, atom_virial \
@@ -433,7 +437,7 @@ class DescrptSeA ():
                                            self.descrpt_deriv,
                                            self.rij,
                                            self.nlist,
-                                           natoms,
+                                           nloc_nall,
                                            n_a_sel = self.nnei_a,
                                            n_r_sel = self.nnei_r)
         tf.summary.histogram('force', force)

@@ -8,9 +8,6 @@
 
 using namespace poplar;
 
-DEF_STACK_USAGE(512, "_ZNSt3__16__sortIRNS_6__lessIffEEPfEEvT0_S5_T_");
-static constexpr auto SPAN = poplar::VectorLayout::SPAN;
-
 inline void
 make_index_range(
     int &idx_start,
@@ -39,10 +36,10 @@ public:
     int nloc;
     int nall;
     int nnei;
+    int ndescrpt;
 
     bool compute()
     {
-        const int ndescrpt = 4 * nnei;
         for (int ii = 0; ii < 9; ++ii)
         {
             virial[ii] = 0.;

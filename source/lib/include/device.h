@@ -16,6 +16,6 @@ typedef unsigned long long uint_64;
 #include "gpu_rocm.h"
 #endif //TENSORFLOW_USE_ROCM
 
-#if GRAPHCORE_POPLAR
+#if TENSORFLOW_USE_IPU
 #include "ipu_poplar.h"
-#endif //GRAPHCORE_POPLAR
+#endif //TENSORFLOW_USE_IPU

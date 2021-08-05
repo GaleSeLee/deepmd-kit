@@ -9,11 +9,6 @@
 
 using namespace poplar;
 
-DEF_STACK_USAGE(512, "_ZNSt3__16__sortIRNS_6__lessIffEEPfEEvT0_S5_T_");
-
-static constexpr auto SPAN = poplar::VectorLayout::SPAN;
-
-
 template <class T>
 T dot3(T *a, T *b) {
   return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
@@ -135,11 +130,16 @@ class EnvMatVertex : public Vertex {
     Input<Vector<int>> type;
     Input<Vector<int>> fmt_nlist_a;
     Input<Vector<int>> sec_a;
+    Input<Vector<T>> avg;
+    Input<Vector<T>> std;//what's the type 
 
+    Output<Vector<T>> em_descrpt_a;
+    Output<Vector<T>> em_descrpt_a_deriv;
     Output<Vector<T>> descrpt_a;
     Output<Vector<T>> descrpt_a_deriv;
     Output<Vector<T>> rij_a;
     int i_idx;
+    int nem;
     float rmin;
     float rmax;
 
@@ -157,6 +157,8 @@ class EnvMatVertex : public Vertex {
 
       std::memset((void*)(&descrpt_a[0]), 0, sizeof(T) * descrpt_a.size());
       std::memset((void*)(&descrpt_a_deriv[0]), 0, sizeof(T) * descrpt_a_deriv.size());
+      std::memset((void*)(&em_descrpt_a[0]), 0, sizeof(T) * em_descrpt_a.size());
+      std::memset((void*)(&em_descrpt_a_deriv[0]), 0, sizeof(T) * em_descrpt_a_deriv.size());
 
       for (int sec_iter = 0; sec_iter < int(sec_a.size()) - 1; ++sec_iter) {
         for (int nei_iter = sec_a[sec_iter]; nei_iter < sec_a[sec_iter+1]; ++nei_iter) {
@@ -176,39 +178,49 @@ class EnvMatVertex : public Vertex {
           int idx_value = nei_iter * 4;	      // 4 components
 
           // 4 value components
-          descrpt_a[idx_value + 0] = 1.f / nr;
-          descrpt_a[idx_value + 1] = rr[0] / nr2;
-          descrpt_a[idx_value + 2] = rr[1] / nr2;
-          descrpt_a[idx_value + 3] = rr[2] / nr2;
+          em_descrpt_a[idx_value + 0] = 1.f / nr;
+          em_descrpt_a[idx_value + 1] = rr[0] / nr2;
+          em_descrpt_a[idx_value + 2] = rr[1] / nr2;
+          em_descrpt_a[idx_value + 3] = rr[2] / nr2;
 
           // deriv of component 1/r
-          descrpt_a_deriv[idx_deriv + 0] = rr[0] * inr3 * sw - descrpt_a[idx_value + 0] * dsw * rr[0] * inr;
-          descrpt_a_deriv[idx_deriv + 1] = rr[1] * inr3 * sw - descrpt_a[idx_value + 0] * dsw * rr[1] * inr;
-          descrpt_a_deriv[idx_deriv + 2] = rr[2] * inr3 * sw - descrpt_a[idx_value + 0] * dsw * rr[2] * inr;
+          em_descrpt_a_deriv[idx_deriv + 0] = rr[0] * inr3 * sw - em_descrpt_a[idx_value + 0] * dsw * rr[0] * inr;
+          em_descrpt_a_deriv[idx_deriv + 1] = rr[1] * inr3 * sw - em_descrpt_a[idx_value + 0] * dsw * rr[1] * inr;
+          em_descrpt_a_deriv[idx_deriv + 2] = rr[2] * inr3 * sw - em_descrpt_a[idx_value + 0] * dsw * rr[2] * inr;
 
           // deriv of component x/r2
-          descrpt_a_deriv[idx_deriv + 3] = (2.f * rr[0] * rr[0] * inr4 - inr2) * sw - descrpt_a[idx_value + 1] * dsw * rr[0] * inr;
-          descrpt_a_deriv[idx_deriv + 4] = (2.f * rr[0] * rr[1] * inr4	) * sw - descrpt_a[idx_value + 1] * dsw * rr[1] * inr;
-          descrpt_a_deriv[idx_deriv + 5] = (2.f * rr[0] * rr[2] * inr4	) * sw - descrpt_a[idx_value + 1] * dsw * rr[2] * inr;
+          em_descrpt_a_deriv[idx_deriv + 3] = (2.f * rr[0] * rr[0] * inr4 - inr2) * sw - em_descrpt_a[idx_value + 1] * dsw * rr[0] * inr;
+          em_descrpt_a_deriv[idx_deriv + 4] = (2.f * rr[0] * rr[1] * inr4	) * sw - em_descrpt_a[idx_value + 1] * dsw * rr[1] * inr;
+          em_descrpt_a_deriv[idx_deriv + 5] = (2.f * rr[0] * rr[2] * inr4	) * sw - em_descrpt_a[idx_value + 1] * dsw * rr[2] * inr;
 
           // deriv of component y/r2
-          descrpt_a_deriv[idx_deriv + 6] = (2.f * rr[1] * rr[0] * inr4	) * sw - descrpt_a[idx_value + 2] * dsw * rr[0] * inr;
-          descrpt_a_deriv[idx_deriv + 7] = (2.f * rr[1] * rr[1] * inr4 - inr2) * sw - descrpt_a[idx_value + 2] * dsw * rr[1] * inr;
-          descrpt_a_deriv[idx_deriv + 8] = (2.f * rr[1] * rr[2] * inr4	) * sw - descrpt_a[idx_value + 2] * dsw * rr[2] * inr;
+          em_descrpt_a_deriv[idx_deriv + 6] = (2.f * rr[1] * rr[0] * inr4	) * sw - em_descrpt_a[idx_value + 2] * dsw * rr[0] * inr;
+          em_descrpt_a_deriv[idx_deriv + 7] = (2.f * rr[1] * rr[1] * inr4 - inr2) * sw - em_descrpt_a[idx_value + 2] * dsw * rr[1] * inr;
+          em_descrpt_a_deriv[idx_deriv + 8] = (2.f * rr[1] * rr[2] * inr4	) * sw - em_descrpt_a[idx_value + 2] * dsw * rr[2] * inr;
 
           // deriv of component z/r2
-          descrpt_a_deriv[idx_deriv + 9] = (2.f * rr[2] * rr[0] * inr4	) * sw - descrpt_a[idx_value + 3] * dsw * rr[0] * inr;
-          descrpt_a_deriv[idx_deriv +10] = (2.f * rr[2] * rr[1] * inr4	) * sw - descrpt_a[idx_value + 3] * dsw * rr[1] * inr;
-          descrpt_a_deriv[idx_deriv +11] = (2.f * rr[2] * rr[2] * inr4 - inr2) * sw - descrpt_a[idx_value + 3] * dsw * rr[2] * inr;
+          em_descrpt_a_deriv[idx_deriv + 9] = (2.f * rr[2] * rr[0] * inr4	) * sw - em_descrpt_a[idx_value + 3] * dsw * rr[0] * inr;
+          em_descrpt_a_deriv[idx_deriv +10] = (2.f * rr[2] * rr[1] * inr4	) * sw - em_descrpt_a[idx_value + 3] * dsw * rr[1] * inr;
+          em_descrpt_a_deriv[idx_deriv +11] = (2.f * rr[2] * rr[2] * inr4 - inr2) * sw - em_descrpt_a[idx_value + 3] * dsw * rr[2] * inr;
 
           // 4 value components
-          descrpt_a[idx_value + 0] *= sw;
-          descrpt_a[idx_value + 1] *= sw;
-          descrpt_a[idx_value + 2] *= sw;
-          descrpt_a[idx_value + 3] *= sw;
+          em_descrpt_a[idx_value + 0] *= sw;
+          em_descrpt_a[idx_value + 1] *= sw;
+          em_descrpt_a[idx_value + 2] *= sw;
+          em_descrpt_a[idx_value + 3] *= sw;
         }
       }
 
+
+
+      for(int ii=0;ii<nem;ii++)
+      {
+         descrpt_a[ii] = (em_descrpt_a[ii] - avg[type[i_idx] * nem + ii]) / std[type[i_idx] * nem + ii];
+      }
+      for(int ii=0;ii<nem*3;ii++)
+      {
+        descrpt_a_deriv[ii] = em_descrpt_a_deriv[ii] / std[type[i_idx] * nem + ii / 3];
+      }
       return true;
     }
 };

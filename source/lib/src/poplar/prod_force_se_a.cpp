@@ -8,9 +8,6 @@
 
 using namespace poplar;
 
-DEF_STACK_USAGE(512, "_ZNSt3__16__sortIRNS_6__lessIffEEPfEEvT0_S5_T_");
-static constexpr auto SPAN = poplar::VectorLayout::SPAN;
-
 inline void
 make_index_range(
     int &idx_start,
@@ -25,18 +22,6 @@ make_index_range(
     }
 }
 
-template <class FPTYPE>
-class ProdForceVertex_0: public Vertex
-{
-public:
-    Output<Vector<FPTYPE>> force;
-    bool compute()
-    {
-	for(int aa=0;aa<3;aa++)
-		force[aa]=0;
-	return true;
-    }
-};
 
 template <class FPTYPE>
 class ProdForceVertex_1 : public Vertex
@@ -48,10 +33,16 @@ public:
     Output<Vector<FPTYPE>> force;
     int nall;
     int nnei;
+    int nloc;
+    int ndescrpt;
 
     bool compute()
     {
-        const auto ndescrpt = 4 * nnei;
+        for(int aa=0;aa<force.size();aa++)
+        {
+            force[aa]=0;
+        }
+
         for (int aa = 0; aa < ndescrpt; ++aa)
         {
 	    force[0] -= net_deriv[aa] * env_deriv[aa * 3 + 0];
@@ -74,10 +65,10 @@ public:
     int nloc;
     int nall;
     int nnei;
+    int ndescrpt;
 
     bool compute()
     {
-        const auto ndescrpt = 4 * nnei;
         for (int i_idx = 0; i_idx < nloc; ++i_idx)
         {
             for (int jj = 0; jj < nnei; ++jj)
@@ -100,4 +91,3 @@ public:
 };
 template class ProdForceVertex_1<float>;
 template class ProdForceVertex_2<float>;
-template class ProdForceVertex_0<float>;
