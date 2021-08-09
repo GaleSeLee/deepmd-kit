@@ -13,6 +13,7 @@ def _prod_force_se_a_grad_cc (op, grad):
                                                        op.inputs[1], 
                                                        op.inputs[2], 
                                                        op.inputs[3], 
+                                                       op.inputs[4],
                                                        n_a_sel = op.get_attr("n_a_sel"),
                                                        n_r_sel = op.get_attr("n_r_sel"))
-    return [net_grad, None, None, None]
+    return [net_grad, None, None, None, None]
