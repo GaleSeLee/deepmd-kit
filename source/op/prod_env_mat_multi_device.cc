@@ -15,6 +15,11 @@ REGISTER_OP("ProdEnvMatA")
     .Input("mesh : int32")
     .Input("davg: T")           //average value of data
     .Input("dstd: T")           //standard deviation
+    .Input("nloc: int32")
+    .Input("nall: int32")
+    .Input("ilist: int32")
+    .Input("numneigh:int32")
+    .Input("firstneight:int32")
     .Attr("rcut_a: float")      //no use
     .Attr("rcut_r: float")
     .Attr("rcut_r_smth: float")
@@ -139,7 +144,9 @@ _prepare_coord_nlist_cpu(
     int & mem_nnei,
     int & max_nbor_size,
     const FPTYPE * box,
-    const int * mesh_tensor_data,
+    const int * ilist_,
+    const int * numneigh_,
+    const int ** firstneigh_,
     const int & nloc,
     const int & nei_mode,
     const float & rcut_r,
@@ -335,6 +342,11 @@ public:
     const Tensor& mesh_tensor   = context->input(context_input_index++);
     const Tensor& avg_tensor	= context->input(context_input_index++);
     const Tensor& std_tensor	= context->input(context_input_index++);
+    const Tensor &nloc_tensor = context->input(context_input_index++);
+    const Tensor &nall_tensor = context->input(context_input_index++);
+    const Tensor &ilist_tensor = context->input(context_input_index++);
+    const Tensor &numneigh_tensor = context->input(context_input_index++);
+    const Tensor &firstneigh_tensor = context->input(context_input_index++);
     // set size of the sample. assume 't' is [[[1, 1, 1], [2, 2, 2]], [[3, 3, 3], [4, 4, 4]]], then shape(t) ==> [2, 2, 3]
     OP_REQUIRES (context, (coord_tensor.shape().dims() == 2),       errors::InvalidArgument ("Dim of coord should be 2"));
     OP_REQUIRES (context, (type_tensor.shape().dims() == 2),        errors::InvalidArgument ("Dim of type should be 2"));
@@ -350,8 +362,8 @@ public:
         context->eigen_device<Device>()
     );
     const int * natoms = natoms_tensor.flat<int>().data();
-    int nloc = natoms[0];
-    int nall = natoms[1];
+    int nloc = nloc_tensor.shape()[0];
+    int nall = nall_tensor.shape()[0];
     int ntypes = natoms_tensor.shape().dim_size(0) - 2; //nloc and nall mean something.
     int nsamples = coord_tensor.shape().dim_size(0);
     //// check the sizes
@@ -533,12 +545,15 @@ public:
       std::vector<FPTYPE> coord_cpy;
       std::vector<int> type_cpy;
       int frame_nall = nall;
+      const int * ilist_ = ilist_tensor.flat<int>().data();
+      const int * numneigh_ = numneigh_tensor.flat<int>().data();
+      const int ** firstneigh_ = firstneigh_tensor.flat<int*>().data();
       // prepare coord and nlist
       _prepare_coord_nlist_cpu<FPTYPE>(
 	  context, &coord, coord_cpy, &type, type_cpy, idx_mapping, 
 	  inlist, ilist, numneigh, firstneigh, jlist,
 	  frame_nall, mem_cpy, mem_nnei, max_nbor_size,
-	  box, mesh_tensor.flat<int>().data(), nloc, nei_mode, rcut_r, max_cpy_trial, max_nnei_trial);
+	  box, ilist_, numneigh_, firstneigh_, nloc, nei_mode, rcut_r, max_cpy_trial, max_nnei_trial);
       // launch the cpu compute function
       deepmd::prod_env_mat_a_cpu(
 	  em, em_deriv, rij, nlist, 
@@ -944,7 +959,9 @@ _prepare_coord_nlist_cpu(
     int & mem_nnei,
     int & max_nbor_size,
     const FPTYPE * box,
-    const int * mesh_tensor_data,
+    const int * ilist_,
+    const int * numneigh_,
+    const int ** firstneigh_,
     const int & nloc,
     const int & nei_mode,
     const float & rcut_r,
@@ -974,9 +991,9 @@ _prepare_coord_nlist_cpu(
   }
   else{
     // copy pointers to nlist data
-    memcpy(&inlist.ilist, 4 + mesh_tensor_data, sizeof(int *));
-    memcpy(&inlist.numneigh, 8 + mesh_tensor_data, sizeof(int *));
-    memcpy(&inlist.firstneigh, 12 + mesh_tensor_data, sizeof(int **));
+    inlist.ilist = ilist_;
+    inlist.numneigh = numneigh_;
+    inlist.firstneigh = firstneigh_;
     max_nbor_size = max_numneigh(inlist);
   }
 }
