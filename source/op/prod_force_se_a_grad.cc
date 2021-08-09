@@ -7,7 +7,8 @@ REGISTER_OP("ProdForceSeAGrad")
 .Input("net_deriv: T")
 .Input("in_deriv: T")
 .Input("nlist: int32")
-.Input("natoms: int32")
+.Input("nloc: int32")
+.Input("nall : int32")
 .Attr("n_a_sel: int")
 .Attr("n_r_sel: int")
 .Output("grad_net: T");
@@ -35,7 +36,8 @@ public:
     const Tensor& net_deriv_tensor	= context->input(context_input_index++);
     const Tensor& in_deriv_tensor	= context->input(context_input_index++);
     const Tensor& nlist_tensor		= context->input(context_input_index++);
-    const Tensor& natoms_tensor		= context->input(context_input_index++);
+    const Tensor& nloc_tensor     = context->input(context_input_index++);
+    const Tensor& nall_tensor  		= context->input(context_input_index++);
 
     // set size of the sample
     TensorShape grad_shape		= grad_tensor.shape();
@@ -47,13 +49,13 @@ public:
     OP_REQUIRES (context, (net_deriv_shape.dims() == 2),errors::InvalidArgument ("Dim of net deriv should be 2"));
     OP_REQUIRES (context, (in_deriv_shape.dims() == 2), errors::InvalidArgument ("Dim of input deriv should be 2"));
     OP_REQUIRES (context, (nlist_shape.dims() == 2),	errors::InvalidArgument ("Dim of nlist should be 2"));
-    OP_REQUIRES (context, (natoms_tensor.shape().dims() == 1),		errors::InvalidArgument ("Dim of natoms should be 1"));
+    //OP_REQUIRES (context, (natoms_tensor.shape().dims() == 1),		errors::InvalidArgument ("Dim of natoms should be 1"));
 
-    OP_REQUIRES (context, (natoms_tensor.shape().dim_size(0) >= 3),	errors::InvalidArgument ("number of atoms should be larger than (or equal to) 3"));
-    auto natoms	= natoms_tensor	.flat<int>();
+    //OP_REQUIRES (context, (natoms_tensor.shape().dim_size(0) >= 3),	errors::InvalidArgument ("number of atoms should be larger than (or equal to) 3"));
+    //auto natoms	= natoms_tensor	.flat<int>();
 
     int nframes = net_deriv_tensor.shape().dim_size(0);
-    int nloc = natoms(0);
+    int nloc = nloc_tensor.shape().dim_size(0);
     int ndescrpt = net_deriv_tensor.shape().dim_size(1) / nloc;
     int nnei = nlist_tensor.shape().dim_size(1) / nloc;
 

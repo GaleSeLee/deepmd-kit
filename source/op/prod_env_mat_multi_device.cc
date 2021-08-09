@@ -362,8 +362,8 @@ public:
         context->eigen_device<Device>()
     );
     const int * natoms = natoms_tensor.flat<int>().data();
-    int nloc = nloc_tensor.shape()[0];
-    int nall = nall_tensor.shape()[0];
+    int nloc = nloc_tensor.shape().dim_size(0);
+    int nall = nall_tensor.shape().dim_size(0);
     int ntypes = natoms_tensor.shape().dim_size(0) - 2; //nloc and nall mean something.
     int nsamples = coord_tensor.shape().dim_size(0);
     //// check the sizes
@@ -814,11 +814,11 @@ public:
       std::vector<int> type_cpy;
       int frame_nall = nall;
       // prepare coord and nlist
-      _prepare_coord_nlist_cpu<FPTYPE>(
-	  context, &coord, coord_cpy, &type, type_cpy, idx_mapping, 
-	  inlist, ilist, numneigh, firstneigh, jlist,
-	  frame_nall, mem_cpy, mem_nnei, max_nbor_size,
-	  box, mesh_tensor.flat<int>().data(), nloc, nei_mode, rcut, max_cpy_trial, max_nnei_trial);
+    //  _prepare_coord_nlist_cpu<FPTYPE>(
+	 // context, &coord, coord_cpy, &type, type_cpy, idx_mapping, 
+	 // inlist, ilist, numneigh, firstneigh, jlist,
+	 // frame_nall, mem_cpy, mem_nnei, max_nbor_size,
+	 // box, mesh_tensor.flat<int>().data(), nloc, nei_mode, rcut, max_cpy_trial, max_nnei_trial);
       // launch the cpu compute function
       prod_env_mat_r_cpu(
           em, em_deriv, rij, nlist, 

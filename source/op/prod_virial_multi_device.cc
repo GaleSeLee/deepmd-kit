@@ -48,8 +48,8 @@ class ProdVirialSeAOp : public OpKernel {
     OP_REQUIRES (context, (rij_tensor.shape().dims() == 2),         errors::InvalidArgument ("Dim of rij should be 2"));
     OP_REQUIRES (context, (nlist_tensor.shape().dims() == 2),       errors::InvalidArgument ("Dim of nlist should be 2"));
 
-    int nloc = nloc_tensor.shape()[0];
-    int nall = nall_tensor.shape()[0];
+    int nloc = nloc_tensor.shape().dim_size(0);
+    int nall = nall_tensor.shape().dim_size(0);
     int nnei = nlist_tensor.shape().dim_size(1) / nloc;
     int nframes = net_deriv_tensor.shape().dim_size(0);
     int ndescrpt = net_deriv_tensor.shape().dim_size(1) / nloc;

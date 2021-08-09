@@ -122,6 +122,13 @@ class DescrptSeA ():
             self.place_holders['type'] = tf.placeholder(tf.int32, [None, None], name=name_pfx+'t_type')
             self.place_holders['natoms_vec'] = tf.placeholder(tf.int32, [self.ntypes+2], name=name_pfx+'t_natoms')
             self.place_holders['default_mesh'] = tf.placeholder(tf.int32, [None], name=name_pfx+'t_mesh')
+
+
+
+
+            nloc = tf.constant(1,shape={self.place_holders['natoms_vec'].numpy()[0], })
+            nall = tf.constant(1,shape={self.place_holders['natoms_vec'].numpy()[1], })
+
             self.stat_descrpt, descrpt_deriv, rij, nlist \
                 = op_module.prod_env_mat_a(self.place_holders['coord'],
                                          self.place_holders['type'],
@@ -130,6 +137,10 @@ class DescrptSeA ():
                                          self.place_holders['default_mesh'],
                                          tf.constant(avg_zero),
                                          tf.constant(std_ones),
+                                         nloc,
+                                         nall,
+                                         
+                                        #*********************************************************# need to add ilist numneigh firstneigh
                                          rcut_a = self.rcut_a,
                                          rcut_r = self.rcut_r,
                                          rcut_r_smth = self.rcut_r_smth,
@@ -420,12 +431,17 @@ class DescrptSeA ():
         """
         [net_deriv] = tf.gradients (atom_ener, self.descrpt_reshape)
         tf.summary.histogram('net_derivative', net_deriv)
-        net_deriv_reshape = tf.reshape (net_deriv, [-1, natoms[0] * self.ndescrpt])        
+        net_deriv_reshape = tf.reshape (net_deriv, [-1, natoms[0] * self.ndescrpt])      
+        tf.Tensor()  
+
+        nloc=tf.constant(-1,shape={natoms.numpy()[0],})
+        nall=tf.constant(-1,shape={natoms.numpy()[1],})
         force \
             = op_module.prod_force_se_a (net_deriv_reshape,
                                           self.descrpt_deriv,
                                           self.nlist,
-                                          natoms,
+                                          nloc,
+                                          nall,
                                           n_a_sel = self.nnei_a,
                                           n_r_sel = self.nnei_r)
         virial, atom_virial \
@@ -433,7 +449,8 @@ class DescrptSeA ():
                                            self.descrpt_deriv,
                                            self.rij,
                                            self.nlist,
-                                           natoms,
+                                           nloc,
+                                           nall,
                                            n_a_sel = self.nnei_a,
                                            n_r_sel = self.nnei_r)
         tf.summary.histogram('force', force)

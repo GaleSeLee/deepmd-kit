@@ -57,7 +57,7 @@ public:
     OP_REQUIRES (context, (nlist_shape.dims() == 2),	errors::InvalidArgument ("Dim of nlist should be 2"));
 
     int nframes = net_deriv_tensor.shape().dim_size(0);
-    int nloc = nloc_tensor.shape()[0];
+    int nloc = nloc_tensor.shape().dim_size(0);
     int ndescrpt = net_deriv_tensor.shape().dim_size(1) / nloc;
     int nnei = nlist_tensor.shape().dim_size(1) / nloc;
 
