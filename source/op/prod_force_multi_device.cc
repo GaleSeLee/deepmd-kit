@@ -6,7 +6,8 @@ REGISTER_OP("ProdForceSeA")
     .Input("net_deriv: T")
     .Input("in_deriv: T")
     .Input("nlist: int32")
-    .Input("natoms: int32")
+    .input("nloc: int32")
+    .Input("nall: int32")
     .Attr("n_a_sel: int")
     .Attr("n_r_sel: int")
     .Output("force: T");
@@ -34,16 +35,17 @@ public:
     const Tensor& net_deriv_tensor  = context->input(context_input_index++);
     const Tensor& in_deriv_tensor   = context->input(context_input_index++);
     const Tensor& nlist_tensor      = context->input(context_input_index++);
-    const Tensor& natoms_tensor     = context->input(context_input_index++);
+    const Tensor& nloc_tensor       = context->input(context_input_index++);
+    const Tensor& all_tensor        = context->input(context_input_index++);
     // set size of the sample
     OP_REQUIRES (context, (net_deriv_tensor.shape().dims() == 2),   errors::InvalidArgument ("Dim of net deriv should be 2"));
     OP_REQUIRES (context, (in_deriv_tensor.shape().dims() == 2),    errors::InvalidArgument ("Dim of input deriv should be 2"));
     OP_REQUIRES (context, (nlist_tensor.shape().dims() == 2),       errors::InvalidArgument ("Dim of nlist should be 2"));
-    OP_REQUIRES (context, (natoms_tensor.shape().dims() == 1),      errors::InvalidArgument ("Dim of natoms should be 1"));
-    OP_REQUIRES (context, (natoms_tensor.shape().dim_size(0) >= 3), errors::InvalidArgument ("number of atoms should be larger than (or equal to) 3"));
-    const int * natoms = natoms_tensor.flat<int>().data();
-    int nloc = natoms[0];
-    int nall = natoms[1];
+    //OP_REQUIRES (context, (natoms_tensor.shape().dims() == 1),      errors::InvalidArgument ("Dim of natoms should be 1"));
+    //OP_REQUIRES (context, (natoms_tensor.shape().dim_size(0) >= 3), errors::InvalidArgument ("number of atoms should be larger than (or equal to) 3"));
+    //const int * natoms = natoms_tensor.flat<int>().data();
+    int nloc = nloc_tensor.shape()[0];
+    int nall = nall_tensor.shape()[0];
     int nframes = net_deriv_tensor.shape().dim_size(0);
     int ndescrpt = net_deriv_tensor.shape().dim_size(1) / nloc;
     int nnei = nlist_tensor.shape().dim_size(1) / nloc;
@@ -209,7 +211,7 @@ REGISTER_CPU(double);
 #if GOOGLE_CUDA || TENSORFLOW_USE_ROCM
 #define REGISTER_GPU(T)                                                                  \
 REGISTER_KERNEL_BUILDER(                                                                 \
-    Name("ProdForceSeA").Device(DEVICE_GPU).TypeConstraint<T>("T").HostMemory("natoms"), \
+    Name("ProdForceSeA").Device(DEVICE_GPU).TypeConstraint<T>("T"), \
     ProdForceSeAOp<GPUDevice, T>);                                                       \
 REGISTER_KERNEL_BUILDER(                                                                 \
     Name("ProdForceSeR").Device(DEVICE_GPU).TypeConstraint<T>("T").HostMemory("natoms"), \
