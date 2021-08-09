@@ -7,7 +7,8 @@ REGISTER_OP("ProdVirialSeA")
     .Input("in_deriv: T")
     .Input("rij: T")
     .Input("nlist: int32")
-    .Input("natoms: int32")
+    .Input("nloc: int32")
+    .Input("nall: int32")
     .Attr("n_a_sel: int")
     .Attr("n_r_sel: int")
     .Output("virial: T")
@@ -38,17 +39,19 @@ class ProdVirialSeAOp : public OpKernel {
     const Tensor& in_deriv_tensor   = context->input(context_input_index++);
     const Tensor& rij_tensor        = context->input(context_input_index++);
     const Tensor& nlist_tensor      = context->input(context_input_index++);
-    const Tensor& natoms_tensor     = context->input(context_input_index++);
+    //const Tensor& natoms_tensor     = context->input(context_input_index++);
+    const Tensor& nloc_tensor       = context->input(context_input_index++);
+    const Tensor& nall_tensor       = context->input(context_input_index++);
     // set size of the sample
     OP_REQUIRES (context, (net_deriv_tensor.shape().dims() == 2),   errors::InvalidArgument ("Dim of net deriv should be 2"));
     OP_REQUIRES (context, (in_deriv_tensor.shape().dims() == 2),    errors::InvalidArgument ("Dim of input deriv should be 2"));
     OP_REQUIRES (context, (rij_tensor.shape().dims() == 2),         errors::InvalidArgument ("Dim of rij should be 2"));
     OP_REQUIRES (context, (nlist_tensor.shape().dims() == 2),       errors::InvalidArgument ("Dim of nlist should be 2"));
-    OP_REQUIRES (context, (natoms_tensor.shape().dims() == 1),      errors::InvalidArgument ("Dim of natoms should be 1"));
-    OP_REQUIRES (context, (natoms_tensor.shape().dim_size(0) >= 3), errors::InvalidArgument ("number of atoms should be larger than (or equal to) 3"));
-    const int * natoms = natoms_tensor.flat<int>().data();
-    int nloc = natoms[0];
-    int nall = natoms[1];
+    //OP_REQUIRES (context, (natoms_tensor.shape().dims() == 1),      errors::InvalidArgument ("Dim of natoms should be 1"));
+    //OP_REQUIRES (context, (natoms_tensor.shape().dim_size(0) >= 3), errors::InvalidArgument ("number of atoms should be larger than (or equal to) 3"));
+    //const int * natoms = natoms_tensor.flat<int>().data();
+    int nloc = nloc_tensor.shape()[0];
+    int nall = nall_tensor.shape()[0];
     int nnei = nlist_tensor.shape().dim_size(1) / nloc;
     int nframes = net_deriv_tensor.shape().dim_size(0);
     int ndescrpt = net_deriv_tensor.shape().dim_size(1) / nloc;
@@ -229,7 +232,7 @@ REGISTER_CPU(double);
 #if GOOGLE_CUDA || TENSORFLOW_USE_ROCM 
 #define REGISTER_GPU(T)                                                                   \
 REGISTER_KERNEL_BUILDER(                                                                  \
-    Name("ProdVirialSeA").Device(DEVICE_GPU).TypeConstraint<T>("T").HostMemory("natoms"), \
+    Name("ProdVirialSeA").Device(DEVICE_GPU).TypeConstraint<T>("T"), \
     ProdVirialSeAOp<GPUDevice, T>);                                                       \
 REGISTER_KERNEL_BUILDER(                                                                  \
     Name("ProdVirialSeR").Device(DEVICE_GPU).TypeConstraint<T>("T").HostMemory("natoms"), \
