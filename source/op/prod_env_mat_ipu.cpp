@@ -3,7 +3,7 @@
 #include <poputil/Util.hpp>
 #include <poputil/VertexTemplates.hpp>
 #include <poputil/exceptions.hpp>
-#include "json.hpp/json.h"
+#include "json/json.h"
 #include <iostream>
 //firstnei
 //map_nlist_cpu
@@ -58,12 +58,12 @@ extern "C" poplar::program::Program ProdEnvMatA(
     const std::string &debugPrefix)
 {
     using namespace poplar;
-    input_index = 0;
+    int input_index = 0;
     const Tensor &coord_tensor = inputs[input_index++];
-    const Tensor &type_tesor = inputs[input_index++];
+    const Tensor &type_tensor = inputs[input_index++];
     const Tensor &natoms_tensor = inputs[input_index++];
-    //const Tensor &box_tensor = inputs[input_index++];//useless
-    //const Tensor &mesh_tensor = inputs[input_index++];// delete
+    const Tensor &box_tensor = inputs[input_index++];//useless
+    const Tensor &mesh_tensor = inputs[input_index++];// delete
     const Tensor &avg_tensor = inputs[input_index++];
     const Tensor &std_tensor = inputs[input_index++];
     const Tensor &nloc_tensor = inputs[input_index++];//modify
@@ -76,14 +76,14 @@ extern "C" poplar::program::Program ProdEnvMatA(
     float rcut_a = json["rcut_a"].asFloat();
     float rcut_r = json["rcut_r"].asFloat();
     float rcut_r_smth = json["rcut_r_smth"].asFloat();
-    std::vector<int> = GetVectorFromJson(json["sel_a"]);
-    std::vector<int> = GetVectorFromJson(json["sel_r"]);
+    std::vector<int>sel_a = GetVectorFromJson(json["sel_a"]);
+    std::vector<int>sel_r = GetVectorFromJson(json["sel_r"]);
     std::vector<int> sec_a;
     std::vector<int> sec_r;
     cum_sum(sec_a, sel_a);
     cum_sum(sec_r,sel_r);
 
-    vector<int> a_shape({sec_a.size()});
+    std::vector<int> a_shape({sec_a.size()});
     Tensor sec_a_tensor = addConstant(INT, ArrayRef(a_shape,int), sec_a, "sec_a");
 
     int nloc = nloc_tensor.shape()[0];
@@ -119,12 +119,14 @@ extern "C" poplar::program::Program ProdEnvMatA(
     Tensor info_dist = graph.addVariable(FLOAT, {nsamples, nloc, max_nbor_size}, "info_dist");
     Tensor info_index = graph.addVariable(INT, {nsamples, nloc, max_nbor_size}, "info_index");
 
+    auto cs1 = graph.addComputeSet(debugPrefix + "/ProdFormatVertex");
+    auto cs2 = graph.addComputeSet(debugPrefix + "/EnvMatVertex");
     for (int i = 0; i < nsamples; i++)
     {
         graph.setTileMapping(sec_a_tensor,0);//sec_a
         graph.setTileMapping(coord_tensor[i], i*nloc);//posi
-        graph.setTileMapping(type_tesor[i],i*nloc);//type
-        auto cs1 = graph.addComputeSet(debugPrefix + "/ProdFormatVertex");
+        graph.setTileMapping(type_tensor[i],i*nloc);//type
+       
         for (int j = 0; j < nloc; j++)
         {
             auto v = graph.addVertex(cs1, poputil::templateVertex("ProdFormatVertex", FLOAT));
@@ -136,7 +138,7 @@ extern "C" poplar::program::Program ProdEnvMatA(
             graph.setTileMapping(info_index[i][j], i * nloc + j);
 
             graph.connect(v["posi"], coord_tensor[i]);
-            graph.connect(v["type"], type_tesor[i]);
+            graph.connect(v["type"], type_tensor[i]);
             graph.connect(v["nei_idx_a"],firstneigh_tensor[i][j]);
             graph.connect(v["sec_a"], sec_a_tensor);
             graph.connect(v["info_type"], info_type[i][j]);
@@ -147,11 +149,12 @@ extern "C" poplar::program::Program ProdEnvMatA(
             graph.setInitialValue(v["rcut"], rcut_r);
         }
 
-        auto cs2 = graph.addComputeSet(debugPrefix + "/EnvMatVertex");
-        graph.setTileMapping(avg,0);//avg
-        graph.setTileMapping(std,0);//std
+        
+        graph.setTileMapping(avg_tensor,0);//avg
+        graph.setTileMapping(std_tensor,0);//std
         for (int j = 0; j < nloc; j++)
         {
+            auto v = graph.addVertex(cs2, poputil::templateVertex("EnvMatVertex", FLOAT));
             graph.setTileMapping(v, i*nloc+j);
 
             graph.setTileMapping(em_descrpt_tensor[j], i*nloc+j);
@@ -166,8 +169,8 @@ extern "C" poplar::program::Program ProdEnvMatA(
             graph.connect(v["em_descrpt_a_deriv"], em_descrpt_deriv_tensor[j]);
             graph.connect(v["rij_a"], rij_tensor[i]);
 
-            graph.connect(v["std"],std);
-            graph.connect(v["avg"],avg);
+            graph.connect(v["std"],std_tensor);
+            graph.connect(v["avg"],avg_tensor);
             graph.connect(v["posi"],coord_tensor[i]);
             graph.connect(v["type"],type_tensor[i]);
             graph.connect(v["sec_a"],sec_a_tensor);
@@ -183,5 +186,5 @@ extern "C" poplar::program::Program ProdEnvMatA(
     return program::Sequence(
         program::Execute(cs1),
         program::Execute(cs2)
-    )
+    );
 }
