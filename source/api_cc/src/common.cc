@@ -1,6 +1,7 @@
 #include "common.h"
 #include "AtomMap.h"
 #include "device.h"
+#include <algorithm>
 
 using namespace tensorflow;
 
@@ -483,6 +484,38 @@ session_input_tensors (
 
   natoms (0) = nloc;
   natoms (1) = nall;
+
+  TensorShape ilist_shape;
+  ilist_shape.AddDim(nloc);
+  TensorShape numneigh_shape;
+  numneigh_shape.addDim(nloc);
+  TensorShape firstneigh_shape;
+  firstneigh_shape.AddDim(nloc);
+
+  int max_neigh=0;
+  Tensor ilist_tensor(DT_INT32, ilist_shape);
+  Tensor numneigh_tensor(DT_INT32, numneigh_shape);
+  auto list = list_tensor.flat<int>();
+  auto numneigh = numneigh_tensor.flat<int>();
+
+  memcpy(&ilist[0], &(dlist.ilist[0]), sizeof(int)*nloc);
+  memcpy(&numneigh[0], &(dlist.numneigh[0]), sizeof(int)*nloc);
+
+  for(int ii=0;ii<nloc;ii++)
+  {
+    max_neigh=max(max_neigh,*(numneigh+ii));
+  }
+  firstneigh_shape.addDim(max_neigh);
+  Tensor firstneigh_tensor(DT_INT32, firstneigh_shape);
+  auto firstneigh=firstneigh_tensor.flat<int>();
+  memset(firstneigh[0],0,sizeof(int)*nloc*max_neigh);
+  int flag=0;
+  for(int ii=0;ii<nloc;ii++)
+  {
+    memcpy((firstneigh[0]+nloc*max_neigh), (dlist.firstneigh[0]+flag), numneigh[ii]);
+    flag+=numneigh[ii];
+  }
+
   for (int ii = 0; ii < ntypes; ++ii) natoms(ii+2) = type_count[ii];
 
   std::string prefix = "";
@@ -495,6 +528,9 @@ session_input_tensors (
     {prefix+"t_box",	box_tensor},
     {prefix+"t_mesh",	mesh_tensor},
     {prefix+"t_natoms",natoms_tensor},
+    {prefix+"t_ilist", ilist_tensor},
+    {prefix+"t_numneigh", numneigh_tensor},
+    {prefix+"t_firstneigh", firstneigh_tensor},
   };  
   if (fparam_.size() > 0) {
     input_tensors.push_back({prefix+"t_fparam", fparam_tensor});

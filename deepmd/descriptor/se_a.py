@@ -122,7 +122,9 @@ class DescrptSeA ():
             self.place_holders['type'] = tf.placeholder(tf.int32, [None, None], name=name_pfx+'t_type')
             self.place_holders['natoms_vec'] = tf.placeholder(tf.int32, [self.ntypes+2], name=name_pfx+'t_natoms')
             self.place_holders['default_mesh'] = tf.placeholder(tf.int32, [None], name=name_pfx+'t_mesh')
-
+            self.place_holders['ilist'] = tf.placeholder(tf.int32,[None], name=name_pfx+"t_list")
+            self.place_holders["numneigh"]=tf.placeholder(tf.int32,[None],name=name_pfx+"t_numneigh")
+            self.place_holders["firstneigh"]=tf.placeholer(tf.int32,[None],name=name_pfx+"t_firstneigh")
 
 
 
@@ -139,8 +141,9 @@ class DescrptSeA ():
                                          tf.constant(std_ones),
                                          nloc,
                                          nall,
-                                         
-                                        #*********************************************************# need to add ilist numneigh firstneigh
+                                         self.place_holders["ilist"],
+                                         self.place_holders["numneigh"],
+                                         self.place_holders["firstneigh"],
                                          rcut_a = self.rcut_a,
                                          rcut_r = self.rcut_r,
                                          rcut_r_smth = self.rcut_r_smth,

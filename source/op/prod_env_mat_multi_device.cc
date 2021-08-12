@@ -339,7 +339,7 @@ public:
     const Tensor& type_tensor	= context->input(context_input_index++);
     const Tensor& natoms_tensor	= context->input(context_input_index++);
     const Tensor& box_tensor	= context->input(context_input_index++);
-    const Tensor& mesh_tensor   = context->input(context_input_index++);
+    const Tensor& mesh_tensor   = context->input(context_input_index++);//
     const Tensor& avg_tensor	= context->input(context_input_index++);
     const Tensor& std_tensor	= context->input(context_input_index++);
     const Tensor &nloc_tensor = context->input(context_input_index++);
