@@ -991,8 +991,10 @@ _prepare_coord_nlist_cpu(
   }
   else{
     // copy pointers to nlist data
-    inlist.ilist = ilist_;
-    inlist.numneigh = numneigh_;
+    //inlist.ilist = ilist_;
+    //inlist.numneigh = numneigh_;
+    memcpy(&inlist.ilist,&ilist_,sizeof(int*));
+    memcpy(&inlist.numneigh,&numneigh_,sizeof(int*));
     memcpy(&inlist.firstneigh,&firstneigh_,sizeof(int**));
     //inlist.firstneigh = firstneigh_;
     max_nbor_size = max_numneigh(inlist);

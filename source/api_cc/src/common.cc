@@ -510,7 +510,7 @@ session_input_tensors (
   }
   firstneigh_shape.AddDim(max_neigh);
   Tensor firstneigh_tensor(DT_INT32, firstneigh_shape);
-  int* firstneigh=firstneigh_tensor.flat<int>();
+  int* firstneigh=firstneigh_tensor.flat<int>().data();
   memset(firstneigh,0,sizeof(int)*nloc*max_neigh);
   int flag=0;
   for(int ii=0;ii<nloc;ii++)
