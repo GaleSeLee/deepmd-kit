@@ -496,8 +496,10 @@ session_input_tensors (
   int max_neigh=0;
   Tensor ilist_tensor(DT_INT32, ilist_shape);
   Tensor numneigh_tensor(DT_INT32, numneigh_shape);
-  auto ilist = ilist_tensor.flat<int>().data();
-  auto numneigh = numneigh_tensor.flat<int>().data();
+  int* ilist = ilist_tensor.flat<int>().data();
+  int* numneigh = numneigh_tensor.flat<int>().data();
+  int* dfirstneigh =NULL;
+  memcpy(&dfirstneigh,&dlist.firstneigh,sizeof(int*));
 
   memcpy(&ilist[0], &(dlist.ilist[0]), sizeof(int)*nloc);
   memcpy(&numneigh[0], &(dlist.numneigh[0]), sizeof(int)*nloc);
@@ -513,7 +515,7 @@ session_input_tensors (
   int flag=0;
   for(int ii=0;ii<nloc;ii++)
   {
-    memcpy((firstneigh+nloc*max_neigh), (dlist.firstneigh+flag), numneigh[ii]);
+    memcpy((firstneigh+nloc*max_neigh), (dfirstneigh+flag), numneigh[ii]);
     flag+=numneigh[ii];
   }
 

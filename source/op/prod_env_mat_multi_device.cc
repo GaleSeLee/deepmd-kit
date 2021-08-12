@@ -146,7 +146,7 @@ _prepare_coord_nlist_cpu(
     const FPTYPE * box,
     const int * ilist_,
     const int * numneigh_,
-    const int ** firstneigh_,
+    const int * firstneigh_,
     const int & nloc,
     const int & nei_mode,
     const float & rcut_r,
@@ -547,7 +547,7 @@ public:
       int frame_nall = nall;
       const int * ilist_ = ilist_tensor.flat<int>().data();
       const int * numneigh_ = numneigh_tensor.flat<int>().data();
-      const int ** firstneigh_ = firstneigh_tensor.flat<int*>().data();
+      const int * firstneigh_ = firstneigh_tensor.flat<int>().data();
       // prepare coord and nlist
       _prepare_coord_nlist_cpu<FPTYPE>(
 	  context, &coord, coord_cpy, &type, type_cpy, idx_mapping, 
@@ -961,7 +961,7 @@ _prepare_coord_nlist_cpu(
     const FPTYPE * box,
     const int * ilist_,
     const int * numneigh_,
-    const int ** firstneigh_,
+    const int * firstneigh_,
     const int & nloc,
     const int & nei_mode,
     const float & rcut_r,
@@ -993,7 +993,8 @@ _prepare_coord_nlist_cpu(
     // copy pointers to nlist data
     inlist.ilist = ilist_;
     inlist.numneigh = numneigh_;
-    inlist.firstneigh = firstneigh_;
+    memcpy(&inlist.firstneigh,&firstneigh_,sizeof(int**));
+    //inlist.firstneigh = firstneigh_;
     max_nbor_size = max_numneigh(inlist);
   }
 }
