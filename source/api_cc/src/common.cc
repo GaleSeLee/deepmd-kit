@@ -2,6 +2,7 @@
 #include "AtomMap.h"
 #include "device.h"
 #include <algorithm>
+#include<cmath>
 
 using namespace tensorflow;
 
@@ -488,31 +489,31 @@ session_input_tensors (
   TensorShape ilist_shape;
   ilist_shape.AddDim(nloc);
   TensorShape numneigh_shape;
-  numneigh_shape.addDim(nloc);
+  numneigh_shape.AddDim(nloc);
   TensorShape firstneigh_shape;
   firstneigh_shape.AddDim(nloc);
 
   int max_neigh=0;
   Tensor ilist_tensor(DT_INT32, ilist_shape);
   Tensor numneigh_tensor(DT_INT32, numneigh_shape);
-  auto list = list_tensor.flat<int>();
-  auto numneigh = numneigh_tensor.flat<int>();
+  auto ilist = ilist_tensor.flat<int>().data();
+  auto numneigh = numneigh_tensor.flat<int>().data();
 
   memcpy(&ilist[0], &(dlist.ilist[0]), sizeof(int)*nloc);
   memcpy(&numneigh[0], &(dlist.numneigh[0]), sizeof(int)*nloc);
 
   for(int ii=0;ii<nloc;ii++)
   {
-    max_neigh=max(max_neigh,*(numneigh+ii));
+    max_neigh=std::max(max_neigh,*(numneigh+ii));
   }
-  firstneigh_shape.addDim(max_neigh);
+  firstneigh_shape.AddDim(max_neigh);
   Tensor firstneigh_tensor(DT_INT32, firstneigh_shape);
-  auto firstneigh=firstneigh_tensor.flat<int>();
-  memset(firstneigh[0],0,sizeof(int)*nloc*max_neigh);
+  int* firstneigh=firstneigh_tensor.flat<int>();
+  memset(firstneigh,0,sizeof(int)*nloc*max_neigh);
   int flag=0;
   for(int ii=0;ii<nloc;ii++)
   {
-    memcpy((firstneigh[0]+nloc*max_neigh), (dlist.firstneigh[0]+flag), numneigh[ii]);
+    memcpy((firstneigh+nloc*max_neigh), (dlist.firstneigh+flag), numneigh[ii]);
     flag+=numneigh[ii];
   }
 
