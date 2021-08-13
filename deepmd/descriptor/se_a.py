@@ -519,7 +519,7 @@ class DescrptSeA ():
                                     self.place_holders['box']: data_box,
                                     self.place_holders['default_mesh']: mesh,
                                     self.place_holders["nall"]:data_nall,
-                                    self.palce_holders["nloc"]:data_nloc,
+                                    self.place_holders["nloc"]:data_nloc,
                                 })
         natoms = natoms_vec
         dd_all = np.reshape(dd_all, [-1, self.ndescrpt * natoms[0]])
