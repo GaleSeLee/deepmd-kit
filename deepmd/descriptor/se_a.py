@@ -124,12 +124,9 @@ class DescrptSeA ():
             self.place_holders['default_mesh'] = tf.placeholder(tf.int32, [None], name=name_pfx+'t_mesh')
             self.place_holders['ilist'] = tf.placeholder(tf.int32,[None], name=name_pfx+"t_list")
             self.place_holders["numneigh"]=tf.placeholder(tf.int32,[None],name=name_pfx+"t_numneigh")
-            self.place_holders["firstneigh"]=tf.placeholer(tf.int32,[None],name=name_pfx+"t_firstneigh")
-
-
-
-            nloc = tf.constant(1,shape={self.place_holders['natoms_vec'].numpy()[0], })
-            nall = tf.constant(1,shape={self.place_holders['natoms_vec'].numpy()[1], })
+            self.place_holders["firstneigh"]=tf.placeholder(tf.int32,[None],name=name_pfx+"t_firstneigh")
+            self.place_holders["nloc"]=tf.placeholder(tf.int32,[None],name=name_pfx+"t_nloc")
+            self.place_holders["nall"]=tf.placeholder(tf.int32,[None],name=name_pfx+"t_nall")
 
             self.stat_descrpt, descrpt_deriv, rij, nlist \
                 = op_module.prod_env_mat_a(self.place_holders['coord'],
@@ -139,8 +136,8 @@ class DescrptSeA ():
                                          self.place_holders['default_mesh'],
                                          tf.constant(avg_zero),
                                          tf.constant(std_ones),
-                                         nloc,
-                                         nall,
+                                         self.place_holders["nloc"],
+                                         self.place_holders["nall"],
                                          self.place_holders["ilist"],
                                          self.place_holders["numneigh"],
                                          self.place_holders["firstneigh"],
@@ -510,7 +507,9 @@ class DescrptSeA ():
                                  data_box, 
                                  data_atype,                             
                                  natoms_vec,
-                                 mesh) :    
+                                 mesh) :  
+        data_nloc = [1 for i in range(natoms_vec[0])]
+        data_nall = [1 for i in range(natoms_vec[1])]
         dd_all \
             = run_sess(self.sub_sess, self.stat_descrpt, 
                                 feed_dict = {
@@ -519,6 +518,8 @@ class DescrptSeA ():
                                     self.place_holders['natoms_vec']: natoms_vec,
                                     self.place_holders['box']: data_box,
                                     self.place_holders['default_mesh']: mesh,
+                                    self.place_holders["nall"]:data_nall,
+                                    self.palce_holders["nloc"]:data_nloc,
                                 })
         natoms = natoms_vec
         dd_all = np.reshape(dd_all, [-1, self.ndescrpt * natoms[0]])

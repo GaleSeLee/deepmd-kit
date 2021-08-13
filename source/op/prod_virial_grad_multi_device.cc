@@ -67,7 +67,7 @@ public:
     //auto natoms	= natoms_tensor	.flat<int>();
 
     int nframes = net_deriv_tensor.shape().dim_size(0);
-    int nloc = nloc_tensor.shape()[0];
+    int nloc = nloc_tensor.shape().dim_size(0);
     int ndescrpt = net_deriv_tensor.shape().dim_size(1) / nloc;
     int nnei = nlist_tensor.shape().dim_size(1) / nloc;
 
