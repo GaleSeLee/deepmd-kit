@@ -362,6 +362,7 @@ class DescrptSeA ():
         coord = tf.reshape (coord_, [-1, natoms[1] * 3])
         box   = tf.reshape (box_, [-1, 9])
         atype = tf.reshape (atype_, [-1, natoms[1]])
+        print(natoms)
         nloc = tf.constant(1,shape=[ natoms.numpy()[0] ,])
         nall = tf.constant(1,shape=[natoms.numpy()[1], ])
         ilist=mesh
@@ -445,8 +446,8 @@ class DescrptSeA ():
         net_deriv_reshape = tf.reshape (net_deriv, [-1, natoms[0] * self.ndescrpt])      
         tf.Tensor()  
 
-        nloc=tf.constant(-1,shape={natoms.numpy()[0],})
-        nall=tf.constant(-1,shape={natoms.numpy()[1],})
+        nloc=tf.constant(-1,shape=[natoms.numpy()[0],])
+        nall=tf.constant(-1,shape=[natoms.numpy()[1],])
         force \
             = op_module.prod_force_se_a (net_deriv_reshape,
                                           self.descrpt_deriv,
