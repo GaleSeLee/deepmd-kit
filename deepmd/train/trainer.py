@@ -546,6 +546,13 @@ class DPTrainer (object):
             feed_dict[self.place_holders[ii]] = np.reshape(batch[ii], [-1])
         for ii in ['natoms_vec', 'default_mesh']:
             feed_dict[self.place_holders[ii]] = batch[ii]
+        nnloc=batch["natoms_vec"][0]
+        nnall=batch["natoms_vec"][1]
+        feed_dict[self.place_holders['nall']] = [1 for i in range(nnall)]
+        feed_dict[self.place_holders['nloc']] = [1 for i in range(nnloc)]
+        feed_dict[self.place_holders['ilist']] = batch["default_mesh"]
+        feed_dict[self.place_holders['firstneigh']] = batch["default_mesh"]
+        feed_dict[self.place_holders['numneigh']] = batch["default_mesh"]
         feed_dict[self.place_holders['is_training']] = is_training
         return feed_dict
 
