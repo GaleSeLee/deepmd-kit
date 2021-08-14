@@ -339,6 +339,11 @@ class DPTrainer (object):
         self.place_holders['natoms_vec']        = tf.placeholder(tf.int32,   [self.ntypes+2], name='t_natoms')
         self.place_holders['default_mesh']      = tf.placeholder(tf.int32,   [None], name='t_mesh')
         self.place_holders['is_training']       = tf.placeholder(tf.bool)
+        self.place_holders['ilist'] = tf.placeholder(tf.int32,[None], name="t_ilist")
+        self.place_holders["numneigh"]=tf.placeholder(tf.int32,[None],name="t_numneigh")
+        self.place_holders["firstneigh"]=tf.placeholder(tf.int32,[None],name="t_firstneigh")
+        self.place_holders["nloc"]=tf.placeholder(tf.int32,[None],name="t_nloc")
+        self.place_holders["nall"]=tf.placeholder(tf.int32,[None],name="t_nall")
         self.model_pred\
             = self.model.build (self.place_holders['coord'], 
                                 self.place_holders['type'], 

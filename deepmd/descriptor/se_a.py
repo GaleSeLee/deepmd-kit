@@ -370,11 +370,11 @@ class DescrptSeA ():
                                        mesh,
                                        self.t_avg,
                                        self.t_std,
-                                       self.place_holders["nloc"],
-                                       self.place_holders["nall"],
-                                       self.place_holders["ilist"],
-                                       self.place_holders["numneigh"],
-                                       self.place_holders["firstneigh"],
+                                       input_dict["nloc"],
+                                       input_dict["nall"],
+                                       input_dict["ilist"],
+                                       input_dict["numneigh"],
+                                       input_dict["firstneigh"],
                                        rcut_a = self.rcut_a,
                                        rcut_r = self.rcut_r,
                                        rcut_r_smth = self.rcut_r_smth,
@@ -439,13 +439,14 @@ class DescrptSeA ():
         tf.summary.histogram('net_derivative', net_deriv)
         net_deriv_reshape = tf.reshape (net_deriv, [-1, natoms[0] * self.ndescrpt])      
         tf.Tensor()  
-
+        nloc_placeholder=tf.placeholder(tf.int32,[None],name="t_nloc")
+        nall_placeholder=tf.placeholder(tf.int32,[None],name="t_nall")
         force \
             = op_module.prod_force_se_a (net_deriv_reshape,
                                           self.descrpt_deriv,
                                           self.nlist,
-                                          self.place_holders["nloc"],
-                                          self.place_holders["nall"],
+                                          nloc_placeholder,
+                                          nall_placeholder,
                                           n_a_sel = self.nnei_a,
                                           n_r_sel = self.nnei_r)
         virial, atom_virial \
@@ -453,8 +454,8 @@ class DescrptSeA ():
                                            self.descrpt_deriv,
                                            self.rij,
                                            self.nlist,
-                                           self.place_holders["nloc"],
-                                           self.place_holders["nall"],
+                                           nloc_placeholder,
+                                           nall_placeholder,
                                            n_a_sel = self.nnei_a,
                                            n_r_sel = self.nnei_r)
         tf.summary.histogram('force', force)
