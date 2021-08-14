@@ -439,9 +439,7 @@ class DescrptSeA ():
         [net_deriv] = tf.gradients (atom_ener, self.descrpt_reshape)
         tf.summary.histogram('net_derivative', net_deriv)
         net_deriv_reshape = tf.reshape (net_deriv, [-1, natoms[0] * self.ndescrpt])      
-        #tf.Tensor()  
-        #nloc_placeholder=tf.placeholder(tf.int32,[None],name="t_nloc")
-        #nall_placeholder=tf.placeholder(tf.int32,[None],name="t_nall")
+
         force \
             = op_module.prod_force_se_a (net_deriv_reshape,
                                           self.descrpt_deriv,
@@ -494,9 +492,7 @@ class DescrptSeA ():
         [net_deriv] = tf.gradients (atom_ener, self.descrpt_reshape)
         tf.summary.histogram('net_derivative', net_deriv)
         net_deriv_reshape = tf.reshape (net_deriv, [-1, natoms[0] * self.ndescrpt])      
-        #tf.Tensor()  
-        #nloc_placeholder=tf.placeholder(tf.int32,[None],name="t_nloc")
-        #nall_placeholder=tf.placeholder(tf.int32,[None],name="t_nall")
+
         force \
             = op_module.prod_force_se_a (net_deriv_reshape,
                                           self.descrpt_deriv,
