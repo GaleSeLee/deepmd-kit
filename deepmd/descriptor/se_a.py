@@ -360,7 +360,11 @@ class DescrptSeA ():
         coord = tf.reshape (coord_, [-1, natoms[1] * 3])
         box   = tf.reshape (box_, [-1, 9])
         atype = tf.reshape (atype_, [-1, natoms[1]])
-
+        nloc = tf.constant(1,shape=[ natoms.numpy()[0] ,])
+        nall = tf.constant(1,shape=[natoms.numpy()[1], ])
+        ilist=None
+        numneigh=None
+        firstneigh=None
         self.descrpt, self.descrpt_deriv, self.rij, self.nlist \
             = op_module.prod_env_mat_a (coord,
                                        atype,
@@ -369,6 +373,11 @@ class DescrptSeA ():
                                        mesh,
                                        self.t_avg,
                                        self.t_std,
+                                       nloc,
+                                       nall,
+                                       ilist,
+                                       numneigh,
+                                       firstneigh,
                                        rcut_a = self.rcut_a,
                                        rcut_r = self.rcut_r,
                                        rcut_r_smth = self.rcut_r_smth,
