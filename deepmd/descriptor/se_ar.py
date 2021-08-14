@@ -77,9 +77,9 @@ class DescrptSeAR ():
         return self.dout
 
 
-    def prod_force_virial(self, atom_ener, natoms) :
-        f_a, v_a, av_a = self.descrpt_a.prod_force_virial(atom_ener, natoms)
-        f_r, v_r, av_r = self.descrpt_r.prod_force_virial(atom_ener, natoms)
+    def prod_force_virial(self, atom_ener, natoms,input_dict) :
+        f_a, v_a, av_a = self.descrpt_a.prod_force_virial(atom_ener, input_dict["nloc"],input_dict["nall"])
+        f_r, v_r, av_r = self.descrpt_r.prod_force_virial(atom_ener, input_dict["nloc"],input_dict["nall"])
         force = f_a + f_r
         virial = v_a + v_r
         atom_virial = av_a + av_r

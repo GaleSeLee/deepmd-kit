@@ -272,7 +272,8 @@ class DescrptLocFrame () :
 
     def prod_force_virial(self, 
                           atom_ener : tf.Tensor, 
-                          natoms : tf.Tensor
+                          natoms : tf.Tensor,
+                          input_dict
     ) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
         """
         Compute force and virial
@@ -302,7 +303,8 @@ class DescrptLocFrame () :
                                       self.descrpt_deriv,
                                       self.nlist,
                                       self.axis,
-                                      natoms,
+                                      input_dict["nloc"],
+                                      input_dict["nall"],
                                       n_a_sel = self.nnei_a,
                                       n_r_sel = self.nnei_r)
         virial, atom_virial \
@@ -311,7 +313,8 @@ class DescrptLocFrame () :
                                      self.rij,
                                      self.nlist,
                                      self.axis,
-                                     natoms,
+                                     input_dict["nloc"],
+                                     input_dict["nall"],
                                      n_a_sel = self.nnei_a,
                                      n_r_sel = self.nnei_r)
         tf.summary.histogram('force', force)

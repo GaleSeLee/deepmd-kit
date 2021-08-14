@@ -320,7 +320,8 @@ class DescrptSeT ():
 
     def prod_force_virial(self, 
                           atom_ener : tf.Tensor, 
-                          natoms : tf.Tensor
+                          natoms : tf.Tensor,
+                          input_dict
     ) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
         """
         Compute force and virial
@@ -349,7 +350,8 @@ class DescrptSeT ():
             = op_module.prod_force_se_a (net_deriv_reshape,
                                           self.descrpt_deriv,
                                           self.nlist,
-                                          natoms,
+                                          input_dict["nloc"],
+                                          input_dict["nall"],
                                           n_a_sel = self.nnei_a,
                                           n_r_sel = self.nnei_r)
         virial, atom_virial \
@@ -357,7 +359,8 @@ class DescrptSeT ():
                                            self.descrpt_deriv,
                                            self.rij,
                                            self.nlist,
-                                           natoms,
+                                           input_dict["nloc"],
+                                           input_dict["nall"],
                                            n_a_sel = self.nnei_a,
                                            n_r_sel = self.nnei_r)
         return force, virial, atom_virial

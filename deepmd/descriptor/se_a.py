@@ -412,7 +412,8 @@ class DescrptSeA ():
 
     def prod_force_virial(self, 
                           atom_ener : tf.Tensor, 
-                          natoms : tf.Tensor
+                          natoms : tf.Tensor,
+                          input_dict
     ) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
         """
         Compute force and virial
@@ -439,14 +440,14 @@ class DescrptSeA ():
         tf.summary.histogram('net_derivative', net_deriv)
         net_deriv_reshape = tf.reshape (net_deriv, [-1, natoms[0] * self.ndescrpt])      
         #tf.Tensor()  
-        nloc_placeholder=tf.placeholder(tf.int32,[None],name="t_nloc")
-        nall_placeholder=tf.placeholder(tf.int32,[None],name="t_nall")
+        #nloc_placeholder=tf.placeholder(tf.int32,[None],name="t_nloc")
+        #nall_placeholder=tf.placeholder(tf.int32,[None],name="t_nall")
         force \
             = op_module.prod_force_se_a (net_deriv_reshape,
                                           self.descrpt_deriv,
                                           self.nlist,
-                                          nloc_placeholder,
-                                          nall_placeholder,
+                                          input_dict["nloc"],
+                                          input_dict["nall"],
                                           n_a_sel = self.nnei_a,
                                           n_r_sel = self.nnei_r)
         virial, atom_virial \
@@ -454,8 +455,63 @@ class DescrptSeA ():
                                            self.descrpt_deriv,
                                            self.rij,
                                            self.nlist,
-                                           nloc_placeholder,
-                                           nall_placeholder,
+                                           input_dict["nloc"],
+                                           input_dict["nall"],
+                                           n_a_sel = self.nnei_a,
+                                           n_r_sel = self.nnei_r)
+        tf.summary.histogram('force', force)
+        tf.summary.histogram('virial', virial)
+        tf.summary.histogram('atom_virial', atom_virial)
+        
+        return force, virial, atom_virial
+
+    def prod_force_virial_a(self, 
+                        atom_ener : tf.Tensor, 
+                        natoms : tf.Tensor,
+                        input_dict
+    ) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
+        """
+        Compute force and virial
+
+        Parameters
+        ----------
+        atom_ener
+                The atomic energy
+        natoms
+                The number of atoms. This tensor has the length of Ntypes + 2
+                natoms[0]: number of local atoms
+                natoms[1]: total number of atoms held by this processor
+                natoms[i]: 2 <= i < Ntypes+2, number of type i atoms
+        Return
+        ------
+        force
+                The force on atoms
+        virial
+                The total virial
+        atom_virial
+                The atomic virial
+        """
+        [net_deriv] = tf.gradients (atom_ener, self.descrpt_reshape)
+        tf.summary.histogram('net_derivative', net_deriv)
+        net_deriv_reshape = tf.reshape (net_deriv, [-1, natoms[0] * self.ndescrpt])      
+        #tf.Tensor()  
+        #nloc_placeholder=tf.placeholder(tf.int32,[None],name="t_nloc")
+        #nall_placeholder=tf.placeholder(tf.int32,[None],name="t_nall")
+        force \
+            = op_module.prod_force_se_a (net_deriv_reshape,
+                                          self.descrpt_deriv,
+                                          self.nlist,
+                                          input_dict["nloc"],
+                                          input_dict["nall"],
+                                          n_a_sel = self.nnei_a,
+                                          n_r_sel = self.nnei_r)
+        virial, atom_virial \
+            = op_module.prod_virial_se_a (net_deriv_reshape,
+                                           self.descrpt_deriv,
+                                           self.rij,
+                                           self.nlist,
+                                           input_dict["nloc"],
+                                           input_dict["nall"],
                                            n_a_sel = self.nnei_a,
                                            n_r_sel = self.nnei_r)
         tf.summary.histogram('force', force)

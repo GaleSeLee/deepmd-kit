@@ -234,7 +234,8 @@ class DescrptSeAEf ():
 
     def prod_force_virial(self, 
                           atom_ener : tf.Tensor, 
-                          natoms : tf.Tensor
+                          natoms : tf.Tensor,
+                          input_dict
     ) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
         """
         Compute force and virial
@@ -258,9 +259,9 @@ class DescrptSeAEf ():
                 The atomic virial
         """
         f_vert, v_vert, av_vert \
-            = self.descrpt_vert.prod_force_virial(atom_ener, natoms)
+            = self.descrpt_vert.prod_force_virial(atom_ener, input_dict["nloc"],input_dict["nall"])
         f_para, v_para, av_para \
-            = self.descrpt_para.prod_force_virial(atom_ener, natoms)
+            = self.descrpt_para.prod_force_virial(atom_ener, input_dict["nloc"],input_dict["nall"])
         force = f_vert + f_para
         virial = v_vert + v_para
         atom_vir = av_vert + av_para

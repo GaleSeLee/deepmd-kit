@@ -208,7 +208,7 @@ class EnerModel() :
         energy = tf.reduce_sum(global_cvt_2_ener_float(energy_raw), axis=1, name='o_energy'+suffix)
 
         force, virial, atom_virial \
-            = self.descrpt.prod_force_virial (atom_ener, natoms)
+            = self.descrpt.prod_force_virial_a (atom_ener, natoms,input_dict)
 
         if self.srtab is not None :
             sw_force \

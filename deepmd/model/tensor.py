@@ -151,7 +151,7 @@ class TensorModel() :
 
             for out_i in out_cpnts:
                 force_i, virial_i, atom_virial_i \
-                    = self.descrpt.prod_force_virial(out_i, natoms)
+                    = self.descrpt.prod_force_virial_a(out_i, natoms,input_dict)
                 force_cpnts.append      (tf.reshape(force_i,       [-1, 3*natoms[1]]))
                 virial_cpnts.append     (tf.reshape(virial_i,      [-1, 9]))
                 atom_virial_cpnts.append(tf.reshape(atom_virial_i, [-1, 9*natoms[1]]))

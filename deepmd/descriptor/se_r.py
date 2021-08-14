@@ -322,7 +322,8 @@ class DescrptSeR ():
 
     def prod_force_virial(self, 
                           atom_ener : tf.Tensor, 
-                          natoms : tf.Tensor
+                          natoms : tf.Tensor,
+                          input_dict
     ) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
         """
         Compute force and virial
@@ -352,13 +353,15 @@ class DescrptSeR ():
             = op_module.prod_force_se_r (net_deriv_reshape,
                                          self.descrpt_deriv,
                                          self.nlist,
-                                         natoms)
+                                         input_dict["nloc"],
+                                         input_dict["nall"])
         virial, atom_virial \
             = op_module.prod_virial_se_r (net_deriv_reshape,
                                           self.descrpt_deriv,
                                           self.rij,
                                           self.nlist,
-                                          natoms)
+                                          input_dict["nloc"],
+                                          input_dict["nall"])
         tf.summary.histogram('force', force)
         tf.summary.histogram('virial', virial)
         tf.summary.histogram('atom_virial', atom_virial)

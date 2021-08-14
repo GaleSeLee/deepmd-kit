@@ -180,7 +180,8 @@ class DescrptHybrid ():
 
     def prod_force_virial(self, 
                           atom_ener : tf.Tensor, 
-                          natoms : tf.Tensor
+                          natoms : tf.Tensor,
+                          input_dict
     ) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
         """
         Compute force and virial
@@ -204,7 +205,7 @@ class DescrptHybrid ():
                 The atomic virial
         """
         for idx,ii in enumerate(self.descrpt_list):
-            ff, vv, av = ii.prod_force_virial(atom_ener, natoms)
+            ff, vv, av = ii.prod_force_virial(atom_ener, input_dict["nloc"],input_dict["nall"])
             if idx == 0:
                 force = ff
                 virial = vv
