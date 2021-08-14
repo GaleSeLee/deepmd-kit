@@ -363,8 +363,8 @@ class DescrptSeA ():
         box   = tf.reshape (box_, [-1, 9])
         atype = tf.reshape (atype_, [-1, natoms[1]])
         print(natoms[0],natoms[1])
-        nloc = tf.constant(1,shape=[ natoms.numpy()[0] ,])
-        nall = tf.constant(1,shape=[natoms.numpy()[1], ])
+        nloc = tf.constant(1,shape=[natoms[0] ,])
+        nall = tf.constant(1,shape=[natoms[1], ])
         ilist=mesh
         numneigh=mesh
         firstneigh=mesh
