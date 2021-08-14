@@ -2,6 +2,8 @@ import math
 import numpy as np
 from typing import Tuple, List
 
+from numpy.lib.function_base import _place_dispatcher
+
 from deepmd.env import tf
 from deepmd.common import get_activation_func, get_precision, ACTIVATION_FN_DICT, PRECISION_DICT, docstring_parameter, get_np_precision
 from deepmd.utils.argcheck import list_to_doc
@@ -122,7 +124,7 @@ class DescrptSeA ():
             self.place_holders['type'] = tf.placeholder(tf.int32, [None, None], name=name_pfx+'t_type')
             self.place_holders['natoms_vec'] = tf.placeholder(tf.int32, [self.ntypes+2], name=name_pfx+'t_natoms')
             self.place_holders['default_mesh'] = tf.placeholder(tf.int32, [None], name=name_pfx+'t_mesh')
-            self.place_holders['ilist'] = tf.placeholder(tf.int32,[None], name=name_pfx+"t_list")
+            self.place_holders['ilist'] = tf.placeholder(tf.int32,[None], name=name_pfx+"t_ilist")
             self.place_holders["numneigh"]=tf.placeholder(tf.int32,[None],name=name_pfx+"t_numneigh")
             self.place_holders["firstneigh"]=tf.placeholder(tf.int32,[None],name=name_pfx+"t_firstneigh")
             self.place_holders["nloc"]=tf.placeholder(tf.int32,[None],name=name_pfx+"t_nloc")
@@ -362,9 +364,9 @@ class DescrptSeA ():
         atype = tf.reshape (atype_, [-1, natoms[1]])
         nloc = tf.constant(1,shape=[ natoms.numpy()[0] ,])
         nall = tf.constant(1,shape=[natoms.numpy()[1], ])
-        ilist=None
-        numneigh=None
-        firstneigh=None
+        ilist=mesh
+        numneigh=mesh
+        firstneigh=mesh
         self.descrpt, self.descrpt_deriv, self.rij, self.nlist \
             = op_module.prod_env_mat_a (coord,
                                        atype,
@@ -529,6 +531,9 @@ class DescrptSeA ():
                                     self.place_holders['default_mesh']: mesh,
                                     self.place_holders["nall"]:data_nall,
                                     self.place_holders["nloc"]:data_nloc,
+                                    self.place_holders["ilist"]:mesh,
+                                    self.place_holders["numneigh"]:mesh,
+                                    self.place_holders["firstneigh"]:mesh,
                                 })
         natoms = natoms_vec
         dd_all = np.reshape(dd_all, [-1, self.ndescrpt * natoms[0]])
