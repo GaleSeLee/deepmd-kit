@@ -554,8 +554,8 @@ class DPTrainer (object):
         feed_dict[self.place_holders['firstneigh']] = batch["default_mesh"]
         feed_dict[self.place_holders['numneigh']] = batch["default_mesh"]
         feed_dict[self.place_holders['is_training']] = is_training
-        feed_dict["nloc_placeholder"]=[1 for i in range(nnloc)]
-        feed_dict["nall_placeholder"]=[1 for i in range(nnall)]
+        feed_dict["prod_force_virial:nloc_placeholder"]=[1 for i in range(nnloc)]
+        feed_dict["prod_force_virial:nall_placeholder"]=[1 for i in range(nnall)]
         return feed_dict
 
     def get_global_step(self):
