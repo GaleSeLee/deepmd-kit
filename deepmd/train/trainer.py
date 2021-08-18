@@ -524,11 +524,22 @@ class DPTrainer (object):
                         self.saver.save (self.sess, os.path.join(os.getcwd(), self.save_ckpt))
                         tf.saved_model.simple_save(self.sess,
                            "./",
-                           inputs={"Input": [self.place_holders['nall'],self.place_holders['nloc'],self.place_holders['ilist'],self.place_holders['firstneigh'], \
-                           self.place_holders['numneigh'],self.place_holders['is_training'],self.place_holders["default_mesh"],self.place_holders["natoms_vec"],\
-                           self.place_holders["type"],self.place_holders["coord"],self.place_holders["box"]]},
-                           outputs={"Output": [self.model_pred["energy"],self.model_pred["force"], self.model_pred["virial"], self.model_pred["atom_ener"] \
-                               ,self.model_pred["atom_virial"]   ]})
+                           inputs={"nall": self.place_holders['nall'], 
+                           "nloc":self.place_holders['nloc'], 
+                           "ilist":self.place_holders['ilist'], 
+                           "firstneigh":self.place_holders['firstneigh'], 
+                           "numneigh":self.place_holders['numneigh'], 
+                           "is_training":self.place_holders['is_training'], 
+                           "default_mesh":self.place_holders["default_mesh"],
+                           "natoms_vec":self.place_holders["natoms_vec"],
+                           "type":self.place_holders["type"],
+                           "coord":self.place_holders["coord"],
+                           "box":self.place_holders["box"]},
+                           outputs={"energy": self.model_pred["energy"],
+                           "force":self.model_pred["force"], 
+                           "virial":self.model_pred["virial"], 
+                           "atom_ener":self.model_pred["atom_ener"],
+                           "virial":self.model_pred["atom_virial"] })
                     except google.protobuf.message.DecodeError as e:
                         raise GraphTooLargeError(
                             "The graph size exceeds 2 GB, the hard limitation of protobuf."
