@@ -409,6 +409,7 @@ compute_inner (std::vector<VALUETYPE> &		dtensor_,
   select_by_type(sel_fwd, sel_bkw, nghost_sel, dcoord_, datype_, 0, sel_type);
 
   std::vector<std::pair<std::string, Tensor>> input_tensors;
+  //first
   int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, cell_size, std::vector<VALUETYPE>(), std::vector<VALUETYPE>(), atommap, name_scope);
   assert (ret == nloc);
 
@@ -442,6 +443,7 @@ compute_inner (std::vector<VALUETYPE> &		dtensor_,
   nlist_data.make_inlist(nlist);
 
   std::vector<std::pair<std::string, Tensor>> input_tensors;
+  //second
   int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, nlist, std::vector<VALUETYPE>(), std::vector<VALUETYPE>(), atommap, nghost, 0, name_scope);
   assert (nloc == ret);
 
@@ -470,6 +472,7 @@ compute_inner (std::vector<VALUETYPE> &		dglobal_tensor_,
   select_by_type(sel_fwd, sel_bkw, nghost_sel, dcoord_, datype_, 0, sel_type);
 
   std::vector<std::pair<std::string, Tensor>> input_tensors;
+  //first
   int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, cell_size, std::vector<VALUETYPE>(), std::vector<VALUETYPE>(), atommap, name_scope);
   assert (ret == nloc);
 
@@ -507,6 +510,7 @@ compute_inner (std::vector<VALUETYPE> &		dglobal_tensor_,
   nlist_data.make_inlist(nlist);
 
   std::vector<std::pair<std::string, Tensor>> input_tensors;
+  //first
   int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, nlist, std::vector<VALUETYPE>(), std::vector<VALUETYPE>(), atommap, nghost, 0, name_scope);
   assert (nloc == ret);
 

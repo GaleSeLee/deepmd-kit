@@ -360,12 +360,27 @@ session_input_tensors (
   if (scope != ""){
     prefix = scope + "/";
   }
+
+  TensorShape ilist_shape;
+  ilist_shape.AddDim(nloc);
+  TensorShape numneigh_shape;
+  numneigh_shape.AddDim(nloc);
+  TensorShape firstneigh_shape;
+  firstneigh_shape.AddDim(nloc);
+  firstneigh_shape.AddDim(2);
+  Tensor ilist_tensor(DT_INT32, ilist_shape);
+  Tensor numneigh_tensor(DT_INT32, numneigh_shape);
+  Tensor firstneigh_tensor(DT_INT32, firstneigh_shape);
+
   input_tensors = {
     {prefix+"t_coord",	coord_tensor}, 
     {prefix+"t_type",	type_tensor},
     {prefix+"t_box",	box_tensor},
     {prefix+"t_mesh",	mesh_tensor},
-    {prefix+"t_natoms",	natoms_tensor},
+    {prefix+"t_natoms",natoms_tensor},
+    {prefix+"t_ilist", ilist_tensor},
+    {prefix+"t_numneigh", numneigh_tensor},
+    {prefix+"t_firstneigh", firstneigh_tensor},
   };  
   if (fparam_.size() > 0) {
     input_tensors.push_back({prefix+"t_fparam", fparam_tensor});
@@ -498,8 +513,6 @@ session_input_tensors (
   Tensor numneigh_tensor(DT_INT32, numneigh_shape);
   int* ilist = ilist_tensor.flat<int>().data();
   int* numneigh = numneigh_tensor.flat<int>().data();
-  int* dfirstneigh =NULL;
-  memcpy(&dfirstneigh,&dlist.firstneigh,sizeof(int*));
 
   memcpy(&ilist[0], &(dlist.ilist[0]), sizeof(int)*nloc);
   memcpy(&numneigh[0], &(dlist.numneigh[0]), sizeof(int)*nloc);

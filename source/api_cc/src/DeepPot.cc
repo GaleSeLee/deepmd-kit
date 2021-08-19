@@ -332,7 +332,7 @@ compute (ENERGYTYPE &			dener,
   validate_fparam_aparam(nloc, fparam, aparam);
 
   std::vector<std::pair<std::string, Tensor>> input_tensors;
-  int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, cell_size, fparam, aparam, atommap);
+  int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, cell_size, fparam, aparam, atommap);//first
   assert (ret == nloc);
 
   run_model (dener, dforce_, dvirial, session, input_tensors, atommap);
@@ -404,6 +404,7 @@ compute_inner (ENERGYTYPE &			dener,
       nlist_data.shuffle(atommap);
       nlist_data.make_inlist(nlist);
     }
+    //second
     int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, nlist, fparam, aparam, atommap, nghost, ago);
     assert (nloc == ret);
     run_model (dener, dforce_, dvirial, session, input_tensors, atommap, nghost);
@@ -427,6 +428,7 @@ compute (ENERGYTYPE &			dener,
   validate_fparam_aparam(atommap.get_type().size(), fparam, aparam);
 
   std::vector<std::pair<std::string, Tensor>> input_tensors;
+  //first
   int nloc = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, cell_size, fparam, aparam, atommap);
 
   run_model (dener, dforce_, dvirial, datom_energy_, datom_virial_, session, input_tensors, atommap);
@@ -463,7 +465,7 @@ compute (ENERGYTYPE &			dener,
         nlist_data.shuffle(atommap);
 	nlist_data.make_inlist(nlist);
     }
-
+//second
     int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, nlist, fparam, aparam, atommap, nghost, ago);
     assert (nloc == ret);
     run_model (dener, dforce_, dvirial, datom_energy_, datom_virial_, session, input_tensors, atommap, nghost);
@@ -719,6 +721,7 @@ compute (std::vector<ENERGYTYPE> &		all_energy,
         nlist_data.shuffle(atommap);
 	nlist_data.make_inlist(nlist);
     }
+    //second
     int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, nlist, fparam, aparam, atommap, nghost, ago);
 
     all_energy.resize (numb_models);
@@ -761,6 +764,7 @@ compute (std::vector<ENERGYTYPE> &		all_energy,
         nlist_data.shuffle(atommap);
 	nlist_data.make_inlist(nlist);
     }
+    //second
     int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, nlist, fparam, aparam, atommap, nghost, ago);
 
     all_energy.resize (numb_models);
