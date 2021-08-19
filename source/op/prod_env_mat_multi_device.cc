@@ -151,7 +151,8 @@ _prepare_coord_nlist_cpu(
     const int & nei_mode,
     const float & rcut_r,
     const int & max_cpy_trial,
-    const int & max_nnei_trial);
+    const int & max_nnei_trial,
+    const int* mesh_tensor_data);
 
 #if GOOGLE_CUDA
 template<typename FPTYPE>
@@ -556,7 +557,7 @@ public:
 	  context, &coord, coord_cpy, &type, type_cpy, idx_mapping, 
 	  inlist, ilist, numneigh, firstneigh, jlist,
 	  frame_nall, mem_cpy, mem_nnei, max_nbor_size,
-	  box, ilist_, numneigh_, firstneigh_, nloc, nei_mode, rcut_r, max_cpy_trial, max_nnei_trial);
+	  box, ilist_, numneigh_, firstneigh_, nloc, nei_mode, rcut_r, max_cpy_trial, max_nnei_trial, mesh_tensor.flat<int>().data());
       // launch the cpu compute function
       printf("mark5\n");
       deepmd::prod_env_mat_a_cpu(
@@ -971,7 +972,8 @@ _prepare_coord_nlist_cpu(
     const int & nei_mode,
     const float & rcut_r,
     const int & max_cpy_trial,
-    const int & max_nnei_trial)
+    const int & max_nnei_trial,
+     const int * mesh_tensor_data)
 {    
   inlist.inum = nloc;
   if(nei_mode != 3){
@@ -998,9 +1000,12 @@ _prepare_coord_nlist_cpu(
     // copy pointers to nlist data
     //inlist.ilist = ilist_;
     //inlist.numneigh = numneigh_;
-    memcpy(&inlist.ilist,&ilist_,sizeof(int*));
-    memcpy(&inlist.numneigh,&numneigh_,sizeof(int*));
-    memcpy(&inlist.firstneigh,&firstneigh_,sizeof(int**));
+    // memcpy(&inlist.ilist,&ilist_,sizeof(int*));
+    // memcpy(&inlist.numneigh,&numneigh_,sizeof(int*));
+    // memcpy(&inlist.firstneigh,&firstneigh_,sizeof(int**));
+    memcpy(&inlist.ilist, 4 + mesh_tensor_data, sizeof(int *));
+    memcpy(&inlist.numneigh, 8 + mesh_tensor_data, sizeof(int *));
+    memcpy(&inlist.firstneigh, 12 + mesh_tensor_data, sizeof(int **));
     //inlist.firstneigh = firstneigh_;
     max_nbor_size = max_numneigh(inlist);
   }

@@ -51,6 +51,7 @@ printf("mat1\n");
   for (unsigned ii = 0; ii < nloc; ++ii) {
     d_nlist_a[ii].reserve(max_nbor_size);
   }
+  printf("check\n");
   for (unsigned ii = 0; ii < nloc; ++ii) {
     int i_idx = inlist.ilist[ii];
     for(unsigned jj = 0; jj < inlist.numneigh[ii]; ++jj){
