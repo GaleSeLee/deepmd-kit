@@ -1,6 +1,6 @@
 #include "custom_op.h"
 #include "prod_virial.h"
-
+#include "stdio.h"
 REGISTER_OP("ProdVirialSeA")
     .Attr("T: {float, double} = DT_DOUBLE")
     .Input("net_deriv: T")
@@ -113,6 +113,7 @@ class ProdVirialSeAOp : public OpKernel {
       deepmd::prod_virial_a_cpu(    
           virial, atom_virial,
           net_deriv, in_deriv, rij, nlist, nloc, nall, nnei);
+      printf("mark8\n");
     }
     }
   }

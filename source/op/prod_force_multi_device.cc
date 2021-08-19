@@ -1,6 +1,6 @@
 #include "custom_op.h"
 #include "prod_force.h"
-
+#include"stdio.h"
 REGISTER_OP("ProdForceSeA")
     .Attr("T: {float, double} = DT_DOUBLE")
     .Input("net_deriv: T")
@@ -103,6 +103,7 @@ public:
       deepmd::prod_force_a_cpu(    
           force, 
           net_deriv, in_deriv, nlist, nloc, nall, nnei);
+      printf("mark7\n");
     }
     }
   }

@@ -332,7 +332,9 @@ compute (ENERGYTYPE &			dener,
   validate_fparam_aparam(nloc, fparam, aparam);
 
   std::vector<std::pair<std::string, Tensor>> input_tensors;
+  printf("before deeppots6\n");
   int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, cell_size, fparam, aparam, atommap);
+  printf("mark deeppots\n");
   assert (ret == nloc);
 
   run_model (dener, dforce_, dvirial, session, input_tensors, atommap);
@@ -404,7 +406,9 @@ compute_inner (ENERGYTYPE &			dener,
       nlist_data.shuffle(atommap);
       nlist_data.make_inlist(nlist);
     }
+    printf("before deeppots1\n");
     int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, nlist, fparam, aparam, atommap, nghost, ago);
+   printf("mark deeppots\n");
     assert (nloc == ret);
     run_model (dener, dforce_, dvirial, session, input_tensors, atommap, nghost);
 }
@@ -427,8 +431,9 @@ compute (ENERGYTYPE &			dener,
   validate_fparam_aparam(atommap.get_type().size(), fparam, aparam);
 
   std::vector<std::pair<std::string, Tensor>> input_tensors;
+ printf("before deeppots2\n");
   int nloc = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, cell_size, fparam, aparam, atommap);
-
+ printf("mark deeppots\n");
   run_model (dener, dforce_, dvirial, datom_energy_, datom_virial_, session, input_tensors, atommap);
 }
 
@@ -463,8 +468,9 @@ compute (ENERGYTYPE &			dener,
         nlist_data.shuffle(atommap);
 	nlist_data.make_inlist(nlist);
     }
-
+printf("before deeppots3\n");
     int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, nlist, fparam, aparam, atommap, nghost, ago);
+    printf("mark deeppots\n");
     assert (nloc == ret);
     run_model (dener, dforce_, dvirial, datom_energy_, datom_virial_, session, input_tensors, atommap, nghost);
 }
@@ -719,8 +725,9 @@ compute (std::vector<ENERGYTYPE> &		all_energy,
         nlist_data.shuffle(atommap);
 	nlist_data.make_inlist(nlist);
     }
+    printf("before deeppots4\n");
     int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, nlist, fparam, aparam, atommap, nghost, ago);
-
+printf("mark deeppots\n");
     all_energy.resize (numb_models);
     all_force.resize (numb_models);
     all_virial.resize (numb_models);
@@ -760,9 +767,10 @@ compute (std::vector<ENERGYTYPE> &		all_energy,
         nlist_data.copy_from_nlist(lmp_list);
         nlist_data.shuffle(atommap);
 	nlist_data.make_inlist(nlist);
-    }
+   }
+    printf("before deeppots5\n");
     int ret = session_input_tensors (input_tensors, dcoord_, ntypes, datype_, dbox, nlist, fparam, aparam, atommap, nghost, ago);
-
+printf("mark deeppots\n");
     all_energy.resize (numb_models);
     all_force .resize (numb_models);
     all_virial.resize (numb_models);
