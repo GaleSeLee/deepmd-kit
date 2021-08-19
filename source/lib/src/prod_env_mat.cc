@@ -29,7 +29,7 @@ prod_env_mat_a_cpu(
 {
   const int nnei = sec.back();
   const int nem = nnei * 4;
-printf("mat1\n");
+
   // set & normalize coord
   std::vector<FPTYPE> d_coord3(nall * 3);
   for (int ii = 0; ii < nall; ++ii) {
@@ -51,7 +51,7 @@ printf("mat1\n");
   for (unsigned ii = 0; ii < nloc; ++ii) {
     d_nlist_a[ii].reserve(max_nbor_size);
   }
-  printf("check\n");
+
   for (unsigned ii = 0; ii < nloc; ++ii) {
     int i_idx = inlist.ilist[ii];
     for(unsigned jj = 0; jj < inlist.numneigh[ii]; ++jj){
@@ -59,20 +59,20 @@ printf("mat1\n");
       d_nlist_a[i_idx].push_back (j_idx);
     }
   }
-  printf("mat2\n");
+
     
 #pragma omp parallel for 
   for (int ii = 0; ii < nloc; ++ii) {
     std::vector<int> fmt_nlist_a;
     int ret = format_nlist_i_cpu(fmt_nlist_a, d_coord3, d_type, ii, d_nlist_a[ii], rcut, sec);
-    printf("mat3\n");
+ 
     std::vector<FPTYPE> d_em_a;
     std::vector<FPTYPE> d_em_a_deriv;
     std::vector<FPTYPE> d_em_r;
     std::vector<FPTYPE> d_em_r_deriv;
     std::vector<FPTYPE> d_rij_a;
     env_mat_a_cpu (d_em_a, d_em_a_deriv, d_rij_a, d_coord3, d_type, ii, fmt_nlist_a, sec, rcut_smth, rcut);
-    printf("mat4\n");
+  
 
     // check sizes
     assert (d_em_a.size() == nem);

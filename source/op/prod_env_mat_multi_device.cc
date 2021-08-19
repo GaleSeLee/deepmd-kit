@@ -334,7 +334,7 @@ public:
   }
 
   void _Compute(OpKernelContext* context) {
-    printf("mark env mat\n");
+
     // Grab the input tensor
     int context_input_index = 0;
     const Tensor& coord_tensor	= context->input(context_input_index++);
@@ -537,8 +537,7 @@ public:
       deepmd::delete_device_memory(firstneigh);
       #endif //TENSORFLOW_USE_ROCM
     }
-    else if (device == "CPU") {
-	printf("mark4\n");
+
       deepmd::InputNlist inlist;
       // some buffers, be freed after the evaluation of this frame
       std::vector<int> idx_mapping;
@@ -552,18 +551,18 @@ public:
       const int * numneigh_ = numneigh_tensor.flat<int>().data();
       const int * firstneigh_ = firstneigh_tensor.flat<int>().data();
       // prepare coord and nlist
-      printf("mark5\n");
+  
       _prepare_coord_nlist_cpu<FPTYPE>(
 	  context, &coord, coord_cpy, &type, type_cpy, idx_mapping, 
 	  inlist, ilist, numneigh, firstneigh, jlist,
 	  frame_nall, mem_cpy, mem_nnei, max_nbor_size,
 	  box, ilist_, numneigh_, firstneigh_, nloc, nei_mode, rcut_r, max_cpy_trial, max_nnei_trial, mesh_tensor.flat<int>().data());
       // launch the cpu compute function
-      printf("mark5\n");
+
       deepmd::prod_env_mat_a_cpu(
 	  em, em_deriv, rij, nlist, 
 	  coord, type, inlist, max_nbor_size, avg, std, nloc, frame_nall, rcut_r, rcut_r_smth, sec_a);
-    printf("mark6\n");
+
       // do nlist mapping if coords were copied
       if(b_nlist_map) _map_nlist_cpu(nlist, &idx_mapping[0], nloc, nnei);
     }

@@ -319,7 +319,6 @@ session_input_tensors (
 
   std::vector<deepmd::VALUETYPE> dcoord (dcoord_);
   atommap.forward (dcoord.begin(), dcoord_.begin(), 3);
-   printf("shit") ;
   for (int ii = 0; ii < nframes; ++ii){
     for (int jj = 0; jj < nall * 3; ++jj){
       coord(ii, jj) = dcoord[jj];
@@ -360,7 +359,6 @@ session_input_tensors (
   if (scope != ""){
     prefix = scope + "/";
   }
-   printf("shit") ;
   TensorShape ilist_shape;
   ilist_shape.AddDim(nloc);
   TensorShape numneigh_shape;
@@ -382,7 +380,6 @@ session_input_tensors (
     {prefix+"t_numneigh", numneigh_tensor},
     {prefix+"t_firstneigh", firstneigh_tensor},
   };  
-  printf("shit") ;
   if (fparam_.size() > 0) {
     input_tensors.push_back({prefix+"t_fparam", fparam_tensor});
   }
@@ -520,11 +517,9 @@ session_input_tensors (
   int* ilist = ilist_tensor.flat<int>().data();
   int* numneigh = numneigh_tensor.flat<int>().data();
   
-  printf("mark1\n");
 
   memcpy(ilist, dlist.ilist, sizeof(int)*nloc);
   memcpy(numneigh, dlist.numneigh, sizeof(int)*nloc);
- printf("mark2\n");
   for(int ii=0;ii<nloc;ii++)
   {
     max_neigh=std::max(max_neigh,numneigh[ii]);
@@ -534,14 +529,12 @@ session_input_tensors (
   int* firstneigh=firstneigh_tensor.flat<int>().data();
   //memset(firstneigh,-1,sizeof(int)*nloc*max_neigh);
   int flag=0;
-  printf("debug2\n");
   for(int ii=0;ii<nloc;ii++)
   {
     memcpy(&(firstneigh[ii*max_neigh]), &(dlist.firstneigh[ii][0]), sizeof(int)*numneigh[ii]);
     flag+=numneigh[ii];
   }
-   printf("mark3\n");
-
+ 
   for (int ii = 0; ii < ntypes; ++ii) natoms(ii+2) = type_count[ii];
 
   std::string prefix = "";
@@ -567,8 +560,7 @@ session_input_tensors (
   if (aparam_.size() > 0) {
     input_tensors.push_back({prefix+"t_aparam", aparam_tensor});
   }
-  printf("make nloc\n");
-  printf("%d\n",nloc);
+
   return nloc;
 }
 
