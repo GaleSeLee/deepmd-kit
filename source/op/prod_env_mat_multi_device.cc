@@ -537,7 +537,7 @@ public:
       deepmd::delete_device_memory(firstneigh);
       #endif //TENSORFLOW_USE_ROCM
     }
-
+  else if (device == "CPU") {
       deepmd::InputNlist inlist;
       // some buffers, be freed after the evaluation of this frame
       std::vector<int> idx_mapping;
