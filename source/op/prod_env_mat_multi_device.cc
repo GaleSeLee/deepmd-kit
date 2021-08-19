@@ -562,6 +562,7 @@ public:
       deepmd::prod_env_mat_a_cpu(
 	  em, em_deriv, rij, nlist, 
 	  coord, type, inlist, max_nbor_size, avg, std, nloc, frame_nall, rcut_r, rcut_r_smth, sec_a);
+    printf("mark6\n");
       // do nlist mapping if coords were copied
       if(b_nlist_map) _map_nlist_cpu(nlist, &idx_mapping[0], nloc, nnei);
     }
