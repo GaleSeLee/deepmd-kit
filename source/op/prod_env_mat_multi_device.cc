@@ -1005,11 +1005,11 @@ _prepare_coord_nlist_cpu(
     int max_neigh=0;
     for(int ii=0;ii<nloc;ii++)
     {
-      max_neigh=max(max_neigh,numneigh_[ii]);
+      max_neigh=std::max(max_neigh,numneigh_[ii]);
     }
     for(int ii=0;ii<nloc;ii++)
     {
-        firstneigh__[ii]= &firstneigh_[ii*max_neigh];
+        firstneigh__[ii]= (int *)&firstneigh_[ii*max_neigh];
     }
     memcpy(&inlist.firstneigh,&firstneigh__,sizeof(int**));
     //memcpy(&inlist.ilist, 4 + mesh_tensor_data, sizeof(int *));
