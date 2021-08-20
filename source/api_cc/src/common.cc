@@ -509,11 +509,11 @@ session_input_tensors (
   std::ofstream nall_f("i_nall");
   std::ofstream nloc_f("i_nloc");
 
-  if(mesh.is_open())
+  if(mesh_f.is_open())
   for(int ii=0;ii<16;ii++)
   {
-    mesh_f<<mesh[ii]<<" ";
-    mesh.close()
+    mesh_f<<mesh(ii)<<" ";
+    mesh_f.close()
   }
 
   if(coord_f.is_open()&&box_f.is_open()&&type_f.is_open())
@@ -544,7 +544,7 @@ session_input_tensors (
   if(nloc_f.is_open())
   {
     for(int ii=0;ii<nloc;ii++)
-    nloc<<1<<" ";
+    nloc_f<<1<<" ";
     nloc_f.close();
   }
 
