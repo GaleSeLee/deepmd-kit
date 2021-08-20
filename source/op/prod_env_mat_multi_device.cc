@@ -999,12 +999,14 @@ _prepare_coord_nlist_cpu(
     // copy pointers to nlist data
     //inlist.ilist = ilist_;
     //inlist.numneigh = numneigh_;
-    // memcpy(&inlist.ilist,&ilist_,sizeof(int*));
-    // memcpy(&inlist.numneigh,&numneigh_,sizeof(int*));
+     memcpy(&inlist.ilist,&ilist_,sizeof(int*));
+     memcpy(&inlist.numneigh,&numneigh_,sizeof(int*));
     // memcpy(&inlist.firstneigh,&firstneigh_,sizeof(int**));
-    memcpy(&inlist.ilist, 4 + mesh_tensor_data, sizeof(int *));
-    memcpy(&inlist.numneigh, 8 + mesh_tensor_data, sizeof(int *));
+    //memcpy(&inlist.ilist, 4 + mesh_tensor_data, sizeof(int *));
+    //memcpy(&inlist.numneigh, 8 + mesh_tensor_data, sizeof(int *));
     memcpy(&inlist.firstneigh, 12 + mesh_tensor_data, sizeof(int **));
+
+
     //inlist.firstneigh = firstneigh_;
     max_nbor_size = max_numneigh(inlist);
   }
