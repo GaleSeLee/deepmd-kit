@@ -529,7 +529,6 @@ class DPTrainer (object):
                            "ilist":self.place_holders['ilist'], 
                            "firstneigh":self.place_holders['firstneigh'], 
                            "numneigh":self.place_holders['numneigh'], 
-                           "is_training":self.place_holders['is_training'], 
                            "default_mesh":self.place_holders["default_mesh"],
                            "natoms_vec":self.place_holders["natoms_vec"],
                            "type":self.place_holders["type"],
