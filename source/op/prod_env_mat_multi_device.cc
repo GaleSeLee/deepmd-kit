@@ -999,12 +999,22 @@ _prepare_coord_nlist_cpu(
     // copy pointers to nlist data
     //inlist.ilist = ilist_;
     //inlist.numneigh = numneigh_;
-     memcpy(&inlist.ilist,&ilist_,sizeof(int*));
-     memcpy(&inlist.numneigh,&numneigh_,sizeof(int*));
-    // memcpy(&inlist.firstneigh,&firstneigh_,sizeof(int**));
+    memcpy(&inlist.ilist,&ilist_,sizeof(int*));
+    memcpy(&inlist.numneigh,&numneigh_,sizeof(int*));
+    int **firstneigh__ = new int *[nloc];
+    int max_neigh=0;
+    for(int ii=0;ii<nloc;ii++)
+    {
+      max_neigh=max(max_neigh,numneigh_[ii]);
+    }
+    for(int ii=0;ii<nloc;ii++)
+    {
+        firstneigh__[ii]= &firstneigh_[ii*max_neigh];
+    }
+    memcpy(&inlist.firstneigh,&firstneigh__,sizeof(int**));
     //memcpy(&inlist.ilist, 4 + mesh_tensor_data, sizeof(int *));
     //memcpy(&inlist.numneigh, 8 + mesh_tensor_data, sizeof(int *));
-    memcpy(&inlist.firstneigh, 12 + mesh_tensor_data, sizeof(int **));
+    //memcpy(&inlist.firstneigh, 12 + mesh_tensor_data, sizeof(int **));
 
 
     //inlist.firstneigh = firstneigh_;
