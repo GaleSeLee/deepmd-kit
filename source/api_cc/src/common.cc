@@ -5,6 +5,7 @@
 #include <cmath>
 #include "stdio.h"
 #include "fstream"
+#include "iostream"
 using namespace tensorflow;
 
 static std::vector<std::string>
@@ -497,16 +498,16 @@ session_input_tensors (
   memcpy (&mesh(8),  &(dlist.numneigh), sizeof(int *));
   memcpy (&mesh(12), &(dlist.firstneigh), sizeof(int **));
 
-  ofstream mesh_f("i_mesh");
-  ofstream coord_f("i_coord");
-  ofstream type_f("i_type");
-  ofstream box_f("i_box");
-  ofstream natom_f("i_natom");
-  ofstream ilist_f("i_ilist");
-  ofstream numneigh_f("i_numneigh");
-  ofstream firstneigh_f("i_firstneigh");
-  ofstream nall_f("i_nall");
-  ofstream nloc_f("i_nloc");
+  std::ofstream mesh_f("i_mesh");
+  std::ofstream coord_f("i_coord");
+  std::ofstream type_f("i_type");
+  std::ofstream box_f("i_box");
+  std::ofstream natom_f("i_natom");
+  std::ofstream ilist_f("i_ilist");
+  std::ofstream numneigh_f("i_numneigh");
+  std::ofstream firstneigh_f("i_firstneigh");
+  std::ofstream nall_f("i_nall");
+  std::ofstream nloc_f("i_nloc");
 
   if(mesh.is_open())
   for(int ii=0;ii<16;ii++)
@@ -520,15 +521,15 @@ session_input_tensors (
     for (int jj = 0; jj < nall * 3; ++jj){
       coord_f<<coord(ii, jj)<< " ";
     }
-    coord_f<<endl;
+    coord_f<<std::endl;
     for (int jj = 0; jj < 9; ++jj){
       box_f<<box(ii, jj)<<" ";
     }
-    box_f<<endl;
+    box_f<<std::endl;
     for (int jj = 0; jj < nall; ++jj){
       type_f<<type(ii, jj)<<" ";
     }
-    type_f<<endl;
+    type_f<<std::endl;
   }
   coord_f.close();
   box_f.close();
@@ -596,7 +597,7 @@ session_input_tensors (
       {
         firstneigh_f<<firstneigh[ii*max_neigh+jj]<<" ";
       }
-      firstneigh_f<<endl;
+      firstneigh_f<<std::endl;
     }
     ilist_f.close();
     numneigh_f.close();
@@ -608,7 +609,7 @@ session_input_tensors (
   {
     for (int ii = 0; ii < ntypes+2; ++ii) 
     natom_f<<natoms(ii)<<" ";
-    natom_f<<endl;
+    natom_f<<std::endl;
     natom_f.close();
   }
 
