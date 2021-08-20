@@ -513,7 +513,7 @@ session_input_tensors (
   for(int ii=0;ii<16;ii++)
   {
     mesh_f<<mesh(ii)<<" ";
-    mesh_f.close()
+    mesh_f.close();
   }
 
   if(coord_f.is_open()&&box_f.is_open()&&type_f.is_open())
