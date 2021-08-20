@@ -5,7 +5,7 @@
 #include "neighbor_list.h"
 #include "prod_env_mat.h"
 #include "errors.h"
-#include "stdio.h"
+
 REGISTER_OP("ProdEnvMatA")
     .Attr("T: {float, double} = DT_DOUBLE")
     .Input("coord: T")          //atomic coordinates

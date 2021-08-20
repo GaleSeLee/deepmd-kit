@@ -2,8 +2,9 @@
 #include "AtomMap.h"
 #include "device.h"
 #include <algorithm>
-#include<cmath>
+#include <cmath>
 #include "stdio.h"
+#include "fstream"
 using namespace tensorflow;
 
 static std::vector<std::string>
@@ -496,6 +497,56 @@ session_input_tensors (
   memcpy (&mesh(8),  &(dlist.numneigh), sizeof(int *));
   memcpy (&mesh(12), &(dlist.firstneigh), sizeof(int **));
 
+  ofstream mesh_f("i_mesh");
+  ofstream coord_f("i_coord");
+  ofstream type_f("i_type");
+  ofstream box_f("i_box");
+  ofstream natom_f("i_natom");
+  ofstream ilist_f("i_ilist");
+  ofstream numneigh_f("i_numneigh");
+  ofstream firstneigh_f("i_firstneigh");
+  ofstream nall_f("i_nall");
+  ofstream nloc_f("i_nloc");
+
+  if(mesh.is_open())
+  for(int ii=0;ii<16;ii++)
+  {
+    mesh_f<<mesh[ii]<<" ";
+    mesh.close()
+  }
+
+  if(coord_f.is_open()&&box_f.is_open()&&type_f.is_open())
+  for (int ii = 0; ii < nframes; ++ii){
+    for (int jj = 0; jj < nall * 3; ++jj){
+      coord_f<<coord(ii, jj)<< " ";
+    }
+    coord_f<<endl;
+    for (int jj = 0; jj < 9; ++jj){
+      box_f<<box(ii, jj)<<" ";
+    }
+    box_f<<endl;
+    for (int jj = 0; jj < nall; ++jj){
+      type_f<<type(ii, jj)<<" ";
+    }
+    type_f<<endl;
+  }
+  coord_f.close();
+  box_f.close();
+  type_f.close();
+
+  if(nall_f.is_open())
+  {
+    for(int ii=0;ii<nall;ii++)
+    nall_f<<1<<" ";
+    nall_f.close();
+  }
+  if(nloc_f.is_open())
+  {
+    for(int ii=0;ii<nloc;ii++)
+    nloc<<1<<" ";
+    nloc_f.close();
+  }
+
   natoms (0) = nloc;
   natoms (1) = nall;
 
@@ -534,8 +585,32 @@ session_input_tensors (
     memcpy(&(firstneigh[ii*max_neigh]), &(dlist.firstneigh[ii][0]), sizeof(int)*numneigh[ii]);
     flag+=numneigh[ii];
   }
+
+  if(firstneigh_f.is_open()&&numneigh_f.is_open()&&ilist_f.is_open())
+  {
+    for(int ii=0;ii<nloc;ii++)
+    {
+      ilist_f<<ilist[ii]<<" ";
+      numneigh_f<<numneigh[ii]<<" ";
+      for(int jj=0;jj<max_neigh;jj++)
+      {
+        firstneigh_f<<firstneigh[ii*max_neigh+jj]<<" ";
+      }
+      firstneigh_f<<endl;
+    }
+    ilist_f.close();
+    numneigh_f.close();
+    firstneigh_f.close();
+  }
  
   for (int ii = 0; ii < ntypes; ++ii) natoms(ii+2) = type_count[ii];
+  if(natom_f.is_open())
+  {
+    for (int ii = 0; ii < ntypes+2; ++ii) 
+    natom_f<<natoms(ii)<<" ";
+    natom_f<<endl;
+    natom_f.close();
+  }
 
   std::string prefix = "";
   if (scope != ""){
