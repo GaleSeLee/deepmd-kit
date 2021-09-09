@@ -337,7 +337,7 @@ public:
   }
 
   void _Compute(OpKernelContext* context) {
-    std::cout<<"std"<<std::endl;
+    std::cout<<"stdalsjdadlajdsalk"<<std::endl;
 
     // Grab the input tensor
     int context_input_index = 0;
@@ -388,7 +388,7 @@ public:
     
     OP_REQUIRES (context, (ntypes == int(sel_a.size())),  errors::InvalidArgument ("number of types should match the length of sel array"));
     OP_REQUIRES (context, (ntypes == int(sel_r.size())),  errors::InvalidArgument ("number of types should match the length of sel array"));
-
+    std::cout<<"stdalsjdadlajdsalk"<<std::endl;
     int nei_mode = 0;
     bool b_nlist_map = false;
     if (mesh_tensor.shape().dim_size(0) == 16) {
@@ -445,6 +445,7 @@ public:
         context_output_index++,
         nlist_shape,
         &nlist_tensor));
+            std::cout<<"stdalsjdadlajdsalk333333"<<std::endl;
 
     FPTYPE * p_em = descrpt_tensor->flat<FPTYPE>().data();
     FPTYPE * p_em_deriv = descrpt_deriv_tensor->flat<FPTYPE>().data();
@@ -564,7 +565,7 @@ public:
 	  frame_nall, mem_cpy, mem_nnei, max_nbor_size,
 	  box, ilist_, numneigh_, firstneigh_, nloc, nei_mode, rcut_r, max_cpy_trial, max_nnei_trial, mesh_tensor.flat<int>().data());
       // launch the cpu compute function
-
+    std::cout<<"stdalsjdadlajdsalk66666666"<<std::endl;
       deepmd::prod_env_mat_a_cpu(
 	  em, em_deriv, rij, nlist, 
 	  coord, type, inlist, max_nbor_size, avg, std, nloc, frame_nall, rcut_r, rcut_r_smth, sec_a);
