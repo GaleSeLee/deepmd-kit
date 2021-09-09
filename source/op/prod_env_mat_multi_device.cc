@@ -573,6 +573,7 @@ public:
 
       // do nlist mapping if coords were copied
       if(b_nlist_map) _map_nlist_cpu(nlist, &idx_mapping[0], nloc, nnei);
+          std::cout<<"stdalsjdadlajdsalk0000"<<std::endl;
     }
     }
   }
