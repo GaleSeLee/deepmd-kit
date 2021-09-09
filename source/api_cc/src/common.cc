@@ -629,12 +629,12 @@ session_input_tensors (
   printf("mark********************************************************\n");
   double* posineigh=posineigh_tensor.flat<double>().data();
   int* typeneigh=typeneigh_tensor.flat<int>().data();
-    printf("make::::::%d\n",&typeneigh[max_neigh]);
-  printf("make::::::%d\n",&firstneigh[max_neigh]);
+    printf("make::::::%d\n",typeneigh[max_neigh]);
+  printf("make::::::%d\n",firstneigh[max_neigh]);
   memset(posineigh,-1, sizeof(double)*nloc*max_neigh*3);
   memset(typeneigh,-1,sizeof(int)*nloc*max_neigh);
-  printf("make::::::%d\n",&typeneigh[max_neigh]);
-  printf("make::::::%d\n",&firstneigh[max_neigh]);
+  printf("make::::::%d\n",typeneigh[max_neigh]);
+  printf("make::::::%d\n",firstneigh[max_neigh]);
     for(int ii=0;ii<nloc;ii++)
   {
     for(int jj=0;jj<numneigh[ii];jj++)
