@@ -630,6 +630,7 @@ session_input_tensors (
   int* typeneigh=typeneigh_tensor.flat<int>().data();
   memset(posineigh, 0, sizeof(double)*nloc*max_neigh*3);
   memset(typeneigh,0,sizeof(int)*nloc*max_neigh);
+  printf("make::::::%d\n",&posineigh[max_neigh]);
     for(int ii=0;ii<nloc;ii++)
   {
     for(int jj=0;jj<numneigh[ii];jj++)
