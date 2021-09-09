@@ -585,7 +585,7 @@ session_input_tensors (
   firstneigh_shape.AddDim(nloc*max_neigh);
   Tensor firstneigh_tensor(DT_INT32, firstneigh_shape);
   int* firstneigh=firstneigh_tensor.flat<int>().data();
-  //memset(firstneigh,-1,sizeof(int)*nloc*max_neigh);
+  memset(firstneigh,-1,sizeof(int)*nloc*max_neigh);
   int flag=0;
   for(int ii=0;ii<nloc;ii++)
   {
@@ -627,11 +627,12 @@ session_input_tensors (
   Tensor typeneigh_tensor(DT_INT32, typeneigh_shape);
   Tensor posineigh_tensor(DT_DOUBLE, posineigh_shape);
   printf("mark********************************************************\n");
- double* posineigh=posineigh_tensor.flat<double>().data();
+  double* posineigh=posineigh_tensor.flat<double>().data();
   int* typeneigh=typeneigh_tensor.flat<int>().data();
-  memset(posineigh, 0, sizeof(double)*nloc*max_neigh*3);
-  memset(typeneigh,0,sizeof(int)*nloc*max_neigh);
+  memset(posineigh,-1, sizeof(double)*nloc*max_neigh*3);
+  memset(typeneigh,-1,sizeof(int)*nloc*max_neigh);
   printf("make::::::%d\n",&typeneigh[max_neigh]);
+  printf("make::::::%d\n",&firstneigh[max_neigh]);
     for(int ii=0;ii<nloc;ii++)
   {
     for(int jj=0;jj<numneigh[ii];jj++)
