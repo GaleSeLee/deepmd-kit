@@ -348,6 +348,8 @@ class DPTrainer (object):
         self.place_holders["firstneigh"]=tf.placeholder(tf.int32,[None],name="t_firstneigh")
         self.place_holders["nloc"]=tf.placeholder(tf.int32,[None],name="t_nloc")
         self.place_holders["nall"]=tf.placeholder(tf.int32,[None],name="t_nall")
+        self.place_holders["typeneigh"]=tf.placeholder(tf.int32,[None],name='t_typeneigh')
+        self.place_holders["posineigh"]=tf.placeholder(GLOBAL_TF_FLOAT_PRECISION,[None],name='t_posineigh')
         self.model_pred\
             = self.model.build (self.place_holders['coord'], 
                                 self.place_holders['type'], 
@@ -533,7 +535,10 @@ class DPTrainer (object):
                            "natoms_vec":self.place_holders["natoms_vec"],
                            "type":self.place_holders["type"],
                            "coord":self.place_holders["coord"],
-                           "box":self.place_holders["box"]},
+                           "box":self.place_holders["box"],
+                           "typeneigh":self.place_holder["typeneigh"],
+                           "posineigh":self.place_holder["posineigh"],
+                           },
                            outputs={"energy": self.model_pred["energy"],
                            "force":self.model_pred["force"], 
                            "virial":self.model_pred["virial"], 
@@ -574,6 +579,8 @@ class DPTrainer (object):
         feed_dict[self.place_holders['ilist']] = batch["default_mesh"]
         feed_dict[self.place_holders['firstneigh']] = batch["default_mesh"]
         feed_dict[self.place_holders['numneigh']] = batch["default_mesh"]
+        feed_dict[self.place_holders["typeneigh"]] = [1 for i in range(nnall)]
+        feed_dict[self.place_holders["posineigh"]] = [1.0,1.0]
         feed_dict[self.place_holders['is_training']] = is_training
         return feed_dict
 

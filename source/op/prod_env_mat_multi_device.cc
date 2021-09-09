@@ -19,7 +19,9 @@ REGISTER_OP("ProdEnvMatA")
     .Input("nall: int32")
     .Input("ilist: int32")
     .Input("numneigh:int32")
-    .Input("firstneight:int32")
+    .Input("firstneigh:int32")
+    .Input("typeneigh:int32")
+    .Input("posineigh:T")
     .Attr("rcut_a: float")      //no use
     .Attr("rcut_r: float")
     .Attr("rcut_r_smth: float")
@@ -349,6 +351,8 @@ public:
     const Tensor &ilist_tensor = context->input(context_input_index++);
     const Tensor &numneigh_tensor = context->input(context_input_index++);
     const Tensor &firstneigh_tensor = context->input(context_input_index++);
+    const Tensor &typeneigh_tensor = context->input(context_input_index++);
+    const Tensor &posineigh_tensor = context->input(context_input_index++);
     // set size of the sample. assume 't' is [[[1, 1, 1], [2, 2, 2]], [[3, 3, 3], [4, 4, 4]]], then shape(t) ==> [2, 2, 3]
     OP_REQUIRES (context, (coord_tensor.shape().dims() == 2),       errors::InvalidArgument ("Dim of coord should be 2"));
     OP_REQUIRES (context, (type_tensor.shape().dims() == 2),        errors::InvalidArgument ("Dim of type should be 2"));

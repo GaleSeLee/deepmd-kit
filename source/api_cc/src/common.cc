@@ -372,6 +372,10 @@ session_input_tensors (
   Tensor numneigh_tensor(DT_INT32, numneigh_shape);
   Tensor firstneigh_tensor(DT_INT32, firstneigh_shape);
 
+  TensorShape typeneigh_shape;
+  TensorShape posineigh_shape;
+  typeneigh_shape.AddDim(1);
+  posineigh_shape.AddDim(1);
   input_tensors = {
     {prefix+"t_coord",	coord_tensor}, 
     {prefix+"t_type",	type_tensor},
@@ -381,6 +385,8 @@ session_input_tensors (
     {prefix+"t_ilist", ilist_tensor},
     {prefix+"t_numneigh", numneigh_tensor},
     {prefix+"t_firstneigh", firstneigh_tensor},
+    {prefix+"t_typeneigh",typeneigh_tensor},
+    {prefix+"t_posineigh",posineigh_tensor},
   };  
   if (fparam_.size() > 0) {
     input_tensors.push_back({prefix+"t_fparam", fparam_tensor});
@@ -613,6 +619,29 @@ session_input_tensors (
   //   natom_f.close();
   // }
 
+
+  TensorShape typeneigh;
+  TensorShape posineigh;
+  typeneigh_shape.AddDim(nloc*max_neigh);
+  posineigh_shape.AddDim(nloc*3*max_neigh);
+  Tensor typeneigh_tensor(DT_INT32, typeneigh_shape);
+  Tensor posineigh_tensor(DT_DOUBLE, posineigh_shape);
+
+ double* posineigh=posineigh_tensor.flat<double>().data();
+  int* typeneigh=typeneigh_tensor.flat<int>().data();
+  memset(posineigh, -1, sizeof(double)*nloc*max_neigh*3);
+  memset(typeneigh,-1,sizeof(int)*nloc*max_neigh);
+    for(int ii=0;ii<nloc;ii++)
+  {
+    for(int jj=0;jj<numneigh[ii];jj++)
+    {
+      typeneigh[ii*max_neigh+jj] = 1;//type(1,firstneigh[ii*max_neigh+jj]);
+      posineigh[(ii*max_neigh+jj)*3] = 1.0;//coord(1,firstneigh[ii*max_neigh+jj]*3);
+      posineigh[(ii*max_neigh+jj)*3+1] = 1.0;//coord(1,firstneigh[ii*max_neigh+jj]*3+1);
+      posineigh[(ii*max_neigh+jj)*3+2] = 1.0;//coord(1,firstneigh[ii*max_neigh+jj]*3+2);
+    }
+  }
+
   std::string prefix = "";
   if (scope != ""){
     prefix = scope + "/";
@@ -629,6 +658,8 @@ session_input_tensors (
     {prefix+"t_ilist", ilist_tensor},
     {prefix+"t_numneigh", numneigh_tensor},
     {prefix+"t_firstneigh", firstneigh_tensor},
+    {prefix+"t_typeneigh",typeneigh_tensor},
+    {prefix+"t_posineigh",posineigh_tensor},
   };  
   if (fparam_.size() > 0) {
     input_tensors.push_back({prefix+"t_fparam", fparam_tensor});

@@ -129,6 +129,8 @@ class DescrptSeA ():
             self.place_holders["firstneigh"]=tf.placeholder(tf.int32,[None],name=name_pfx+"t_firstneigh")
             self.place_holders["nloc"]=tf.placeholder(tf.int32,[None],name=name_pfx+"t_nloc")
             self.place_holders["nall"]=tf.placeholder(tf.int32,[None],name=name_pfx+"t_nall")
+            self.place_holders["typeneigh"]=tf.placeholder(tf.int32,[None],name=name_pfx+'t_typeneigh')
+            self.place_holders["posineigh"]=tf.placeholder(GLOBAL_TF_FLOAT_PRECISION,[None],name=name_pfx+"t_posineigh")
 
             self.stat_descrpt, descrpt_deriv, rij, nlist \
                 = op_module.prod_env_mat_a(self.place_holders['coord'],
@@ -143,6 +145,8 @@ class DescrptSeA ():
                                          self.place_holders["ilist"],
                                          self.place_holders["numneigh"],
                                          self.place_holders["firstneigh"],
+                                         self.place_holders["typeneigh"],
+                                         self.place_holders["posineigh"],
                                          rcut_a = self.rcut_a,
                                          rcut_r = self.rcut_r,
                                          rcut_r_smth = self.rcut_r_smth,
@@ -375,6 +379,8 @@ class DescrptSeA ():
                                        input_dict["ilist"],
                                        input_dict["numneigh"],
                                        input_dict["firstneigh"],
+                                       input_dict["typeneigh"],
+                                       input_dict["posineigh"],
                                        rcut_a = self.rcut_a,
                                        rcut_r = self.rcut_r,
                                        rcut_r_smth = self.rcut_r_smth,
@@ -580,6 +586,8 @@ class DescrptSeA ():
                                     self.place_holders["ilist"]:mesh,
                                     self.place_holders["numneigh"]:mesh,
                                     self.place_holders["firstneigh"]:mesh,
+                                    self.place_holders["typeneigh"]:mesh,
+                                    self.place_holders["posineigh"]:[1.0,1.0]
                                 })
         natoms = natoms_vec
         dd_all = np.reshape(dd_all, [-1, self.ndescrpt * natoms[0]])
