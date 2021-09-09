@@ -625,7 +625,7 @@ session_input_tensors (
   posineigh_shape.AddDim(nloc*3*max_neigh);
   Tensor typeneigh_tensor(DT_INT32, typeneigh_shape);
   Tensor posineigh_tensor(DT_DOUBLE, posineigh_shape);
-
+  printf("mark********************************************************\n");
  double* posineigh=posineigh_tensor.flat<double>().data();
   int* typeneigh=typeneigh_tensor.flat<int>().data();
   memset(posineigh, 0, sizeof(double)*nloc*max_neigh*3);
