@@ -6,6 +6,7 @@
 #include "stdio.h"
 #include "fstream"
 #include "iostream"
+#include "cstring"
 using namespace tensorflow;
 
 static std::vector<std::string>
