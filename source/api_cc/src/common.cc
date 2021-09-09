@@ -620,8 +620,8 @@ session_input_tensors (
   // }
 
 
-  TensorShape typeneigh;
-  TensorShape posineigh;
+  TensorShape typeneigh_shape;
+  TensorShape posineigh_shape;
   typeneigh_shape.AddDim(nloc*max_neigh);
   posineigh_shape.AddDim(nloc*3*max_neigh);
   Tensor typeneigh_tensor(DT_INT32, typeneigh_shape);
