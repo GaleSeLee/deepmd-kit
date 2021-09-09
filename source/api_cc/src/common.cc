@@ -385,8 +385,7 @@ session_input_tensors (
     {prefix+"t_ilist", ilist_tensor},
     {prefix+"t_numneigh", numneigh_tensor},
     {prefix+"t_firstneigh", firstneigh_tensor},
-    {prefix+"t_typeneigh",typeneigh_tensor},
-    {prefix+"t_posineigh",posineigh_tensor},
+
   };  
   if (fparam_.size() > 0) {
     input_tensors.push_back({prefix+"t_fparam", fparam_tensor});
