@@ -628,8 +628,8 @@ session_input_tensors (
 
  double* posineigh=posineigh_tensor.flat<double>().data();
   int* typeneigh=typeneigh_tensor.flat<int>().data();
-  memset(posineigh, -1, sizeof(double)*nloc*max_neigh*3);
-  memset(typeneigh,-1,sizeof(int)*nloc*max_neigh);
+  memset(posineigh, 0, sizeof(double)*nloc*max_neigh*3);
+  memset(typeneigh,0,sizeof(int)*nloc*max_neigh);
     for(int ii=0;ii<nloc;ii++)
   {
     for(int jj=0;jj<numneigh[ii];jj++)
