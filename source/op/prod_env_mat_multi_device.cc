@@ -5,6 +5,7 @@
 #include "neighbor_list.h"
 #include "prod_env_mat.h"
 #include "errors.h"
+#include "iostream"
 
 REGISTER_OP("ProdEnvMatA")
     .Attr("T: {float, double} = DT_DOUBLE")
@@ -336,6 +337,7 @@ public:
   }
 
   void _Compute(OpKernelContext* context) {
+    std::cout<<"std"<<std::endl;
 
     // Grab the input tensor
     int context_input_index = 0;
