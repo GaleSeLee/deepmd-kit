@@ -642,10 +642,10 @@ session_input_tensors (
   {
     for(int jj=0;jj<numneigh[ii];jj++)
     {
-      typeneigh[ii*max_neigh+jj] = type(1,firstneigh[ii*max_neigh+jj]);
-      posineigh[(ii*max_neigh+jj)*3] = coord(1,firstneigh[ii*max_neigh+jj]*3);
-      posineigh[(ii*max_neigh+jj)*3+1] = coord(1,firstneigh[ii*max_neigh+jj]*3+1);
-      posineigh[(ii*max_neigh+jj)*3+2] = coord(1,firstneigh[ii*max_neigh+jj]*3+2);
+      typeneigh[ii*max_neigh+jj] = 1;//type(1,firstneigh[ii*max_neigh+jj]);
+      posineigh[(ii*max_neigh+jj)*3] =1.0;// coord(1,firstneigh[ii*max_neigh+jj]*3);
+      posineigh[(ii*max_neigh+jj)*3+1] = 1.0;//coord(1,firstneigh[ii*max_neigh+jj]*3+1);
+      posineigh[(ii*max_neigh+jj)*3+2] = 1.0;//coord(1,firstneigh[ii*max_neigh+jj]*3+2);
     }
   }
 
@@ -668,6 +668,7 @@ session_input_tensors (
     {prefix+"t_typeneigh",typeneigh_tensor},
     {prefix+"t_posineigh",posineigh_tensor},
   };  
+  
   if (fparam_.size() > 0) {
     input_tensors.push_back({prefix+"t_fparam", fparam_tensor});
   }
