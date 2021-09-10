@@ -10,7 +10,7 @@ neigh_modify    every 10 delay 0 check no
 read_data	water.lmp
 mass 		1 16
 mass		2 2
-
+replicate       4 2 2 
 pair_style	deepmd frozen_model.pb
 pair_coeff	
 
@@ -22,4 +22,4 @@ thermo_style    custom step pe ke etotal temp press vol
 thermo          100
 dump		1 all custom 100 water.dump id type x y z 
 
-run             1000
+run             1

@@ -504,55 +504,56 @@ session_input_tensors (
   memcpy (&mesh(8),  &(dlist.numneigh), sizeof(int *));
   memcpy (&mesh(12), &(dlist.firstneigh), sizeof(int **));
 
-  // std::ofstream mesh_f("i_mesh");
-  // std::ofstream coord_f("i_coord");
-  // std::ofstream type_f("i_type");
-  // std::ofstream box_f("i_box");
-  // std::ofstream natom_f("i_natom");
-  // std::ofstream ilist_f("i_ilist");
-  // std::ofstream numneigh_f("i_numneigh");
-  // std::ofstream firstneigh_f("i_firstneigh");
-  // std::ofstream nall_f("i_nall");
-  // std::ofstream nloc_f("i_nloc");
+   std::ofstream mesh_f("i_mesh");
+   std::ofstream coord_f("i_coord");
+   std::ofstream type_f("i_type");
+   std::ofstream box_f("i_box");
+   std::ofstream natom_f("i_natom");
+   std::ofstream ilist_f("i_ilist");
+   std::ofstream numneigh_f("i_numneigh");
+   std::ofstream firstneigh_f("i_firstneigh");
+   std::ofstream nall_f("i_nall");
+   std::ofstream nloc_f("i_nloc");
+   std::ofstream typeneigh_f("i_typeneigh");
+   std::ofstream posineigh_f("i_posineigh");
+   if(mesh_f.is_open())
+   for(int ii=0;ii<16;ii++)
+   {
+     mesh_f<<mesh(ii)<<" ";
+     mesh_f.close();
+   }
 
-  // if(mesh_f.is_open())
-  // for(int ii=0;ii<16;ii++)
-  // {
-  //   mesh_f<<mesh(ii)<<" ";
-  //   mesh_f.close();
-  // }
+   if(coord_f.is_open()&&box_f.is_open()&&type_f.is_open())
+   for (int ii = 0; ii < nframes; ++ii){
+     for (int jj = 0; jj < nall * 3; ++jj){
+       coord_f<<coord(ii, jj)<< " ";
+     }
+     coord_f<<std::endl;
+     for (int jj = 0; jj < 9; ++jj){
+       box_f<<box(ii, jj)<<" ";
+     }
+     box_f<<std::endl;
+     for (int jj = 0; jj < nall; ++jj){
+       type_f<<type(ii, jj)<<" ";
+     }
+     type_f<<std::endl;
+   }
+   coord_f.close();
+   box_f.close();
+   type_f.close();
 
-  // if(coord_f.is_open()&&box_f.is_open()&&type_f.is_open())
-  // for (int ii = 0; ii < nframes; ++ii){
-  //   for (int jj = 0; jj < nall * 3; ++jj){
-  //     coord_f<<coord(ii, jj)<< " ";
-  //   }
-  //   coord_f<<std::endl;
-  //   for (int jj = 0; jj < 9; ++jj){
-  //     box_f<<box(ii, jj)<<" ";
-  //   }
-  //   box_f<<std::endl;
-  //   for (int jj = 0; jj < nall; ++jj){
-  //     type_f<<type(ii, jj)<<" ";
-  //   }
-  //   type_f<<std::endl;
-  // }
-  // coord_f.close();
-  // box_f.close();
-  // type_f.close();
-
-  // if(nall_f.is_open())
-  // {
-  //   for(int ii=0;ii<nall;ii++)
-  //   nall_f<<1<<" ";
-  //   nall_f.close();
-  // }
-  // if(nloc_f.is_open())
-  // {
-  //   for(int ii=0;ii<nloc;ii++)
-  //   nloc_f<<1<<" ";
-  //   nloc_f.close();
-  // }
+   if(nall_f.is_open())
+   {
+     for(int ii=0;ii<nall;ii++)
+     nall_f<<1<<" ";
+     nall_f.close();
+   }
+   if(nloc_f.is_open())
+   {
+     for(int ii=0;ii<nloc;ii++)
+     nloc_f<<1<<" ";
+     nloc_f.close();
+   }
 
   natoms (0) = nloc;
   natoms (1) = nall;
@@ -596,31 +597,31 @@ session_input_tensors (
   }
     printf("make::::::%d\n",firstneigh[max_neigh]);
 
-  // if(firstneigh_f.is_open()&&numneigh_f.is_open()&&ilist_f.is_open())
-  // {
-  //   for(int ii=0;ii<nloc;ii++)
-  //   {
-  //     ilist_f<<ilist[ii]<<" ";
-  //     numneigh_f<<numneigh[ii]<<" ";
-  //     for(int jj=0;jj<max_neigh;jj++)
-  //     {
-  //       firstneigh_f<<firstneigh[ii*max_neigh+jj]<<" ";
-  //     }
-  //     firstneigh_f<<std::endl;
-  //   }
-  //   ilist_f.close();
-  //   numneigh_f.close();
-  //   firstneigh_f.close();
-  // }
+   if(firstneigh_f.is_open()&&numneigh_f.is_open()&&ilist_f.is_open())
+   {
+     for(int ii=0;ii<nloc;ii++)
+     {
+      ilist_f<<ilist[ii]<<" ";
+       numneigh_f<<numneigh[ii]<<" ";
+       for(int jj=0;jj<max_neigh;jj++)
+       {
+         firstneigh_f<<firstneigh[ii*max_neigh+jj]<<" ";
+       }
+       firstneigh_f<<std::endl;
+     }
+     ilist_f.close();
+     numneigh_f.close();
+     firstneigh_f.close();
+   }
  
-  // for (int ii = 0; ii < ntypes; ++ii) natoms(ii+2) = type_count[ii];
-  // if(natom_f.is_open())
-  // {
-  //   for (int ii = 0; ii < ntypes+2; ++ii) 
-  //   natom_f<<natoms(ii)<<" ";
-  //   natom_f<<std::endl;
-  //   natom_f.close();
-  // }
+   for (int ii = 0; ii < ntypes; ++ii) natoms(ii+2) = type_count[ii];
+   if(natom_f.is_open())
+   {
+     for (int ii = 0; ii < ntypes+2; ++ii) 
+     natom_f<<natoms(ii)<<" ";
+     natom_f<<std::endl;
+    natom_f.close();
+   }
 
 
   TensorShape typeneigh_shape;
@@ -629,25 +630,36 @@ session_input_tensors (
   posineigh_shape.AddDim(nloc*3*max_neigh);
   Tensor typeneigh_tensor(DT_INT32, typeneigh_shape);
   Tensor posineigh_tensor(DT_DOUBLE, posineigh_shape);
-  printf("mark********************************************************\n");
   double* posineigh=posineigh_tensor.flat<double>().data();
   int* typeneigh=typeneigh_tensor.flat<int>().data();
-  printf("make::::::%d\n",typeneigh[max_neigh]);
-  printf("make::::::%d\n",firstneigh[max_neigh]);
   memset(posineigh,-1, sizeof(double)*nloc*max_neigh*3);
   memset(typeneigh,-1,sizeof(int)*nloc*max_neigh);
-  printf("make::::::%d\n",typeneigh[max_neigh]);
-  printf("make::::::%d\n",firstneigh[max_neigh]);
     for(int ii=0;ii<nloc;ii++)
   {
-    for(int jj=0;jj<max_neigh;jj++)
+    for(int jj=0;jj<numneigh[ii];jj++)
     {
-      typeneigh[ii*max_neigh+jj] = 1;//type(1,firstneigh[ii*max_neigh+jj]);
-      posineigh[(ii*max_neigh+jj)*3] =1.0;// coord(1,firstneigh[ii*max_neigh+jj]*3);
-      posineigh[(ii*max_neigh+jj)*3+1] = 1.0;//coord(1,firstneigh[ii*max_neigh+jj]*3+1);
-      posineigh[(ii*max_neigh+jj)*3+2] = 1.0;//coord(1,firstneigh[ii*max_neigh+jj]*3+2);
+      typeneigh[ii*max_neigh+jj] = type(0,firstneigh[ii*max_neigh+jj]);
+      posineigh[(ii*max_neigh+jj)*3] = coord(0,firstneigh[ii*max_neigh+jj]*3);
+      posineigh[(ii*max_neigh+jj)*3+1] = coord(0,firstneigh[ii*max_neigh+jj]*3+1);
+      posineigh[(ii*max_neigh+jj)*3+2] = coord(0,firstneigh[ii*max_neigh+jj]*3+2);
     }
   }
+
+if(typeneigh_f.is_open()&&posineigh_f.is_open())
+{
+	for(int ii=0;ii<nloc;ii++)
+	{
+		for(int jj=0;jj<max_neigh;jj++)
+		{
+			typeneigh_f<<typeneigh[ii*max_neigh+jj]<<" ";
+			posineigh_f<<posineigh[(ii*max_neigh+jj)*3]<<" "<<posineigh[(ii*max_neigh+jj)*3+1]<<" "<<posineigh[(ii*max_neigh)*3+2]<<" ";
+		}
+		posineigh_f<<std::endl;
+		typeneigh_f<<std::endl;
+	}
+	typeneigh_f.close();
+	posineigh_f.close();
+}
 
   std::string prefix = "";
   if (scope != ""){
