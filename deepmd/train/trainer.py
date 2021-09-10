@@ -525,7 +525,7 @@ class DPTrainer (object):
                     try:
                         self.saver.save (self.sess, os.path.join(os.getcwd(), self.save_ckpt))
                         tf.saved_model.simple_save(self.sess,
-                           "./",
+                           f"./saved_{cur_batch}",
                            inputs={"nall": self.place_holders['nall'], 
                            "nloc":self.place_holders['nloc'], 
                            "ilist":self.place_holders['ilist'], 
